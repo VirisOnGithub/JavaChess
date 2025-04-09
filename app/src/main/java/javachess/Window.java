@@ -1,0 +1,132 @@
+package javachess;
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.*;
+import javachess.pieces.*;
+
+import static java.lang.Math.min;
+
+public class Window extends JFrame implements Observer {
+
+    JLabel[][] tabJL;
+    Map<Piece, ImageIcon> pieceIcons = new HashMap<>();
+
+    Position mouseClick;
+    Game game;
+
+    public Window() {
+        super("Java Chess");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("/white-king.png")));
+        setPreferredSize(new Dimension(800, 800));
+
+        for(PieceColor pieceColor : PieceColor.values()){
+            for(PieceType type: PieceType.values()) {
+                Piece piece = createPiece(type, pieceColor);
+                String filename = piece.findFile();
+                ImageIcon icon = new ImageIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource('/' + filename))).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+                pieceIcons.put(piece, icon);
+            }
+        }
+
+        game = new Game();
+        game.addObserver(this);
+        tabJL = new JLabel[8][8];
+
+        JPanel jp = new JPanel(new GridLayout(8, 8));
+        setContentPane(jp);
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                JLabel jl = new JLabel();
+                tabJL[i][j] = jl;
+                jl.setOpaque(true);
+                jl.setBackground((i + j) % 2 == 0 ? Color.WHITE : Color.BLACK);
+                jl.setPreferredSize(new Dimension(75, 75));
+
+                final int ii = i, jj = j;
+                jl.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        System.out.println("Clicked at " + ii + " " + jj);
+//                    model.set(ii, jj);
+                        if(mouseClick == null){
+                            Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
+                            mouseClick = piece == null ? null : new Position(ii, jj);
+                        } else {
+                            Position mouseSecondClick = new Position(ii, jj);
+                            if(mouseClick.equals(mouseSecondClick)){
+                                mouseClick = null;
+                                return;
+                            }
+                            else {
+                                game.setMove(mouseClick, mouseSecondClick);
+                                mouseClick = null;
+                            }
+
+                        }
+                    }
+                });
+
+                jp.add(jl);
+            }
+        }
+
+        updateBoard();
+
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Component component = e.getComponent();
+                if (component instanceof JFrame frame) {
+                    int size = min(frame.getWidth(), frame.getHeight());
+                    frame.setSize(size, size);
+                }
+            }
+        });
+    }
+
+    public Piece createPiece(PieceType type, PieceColor pieceColor) {
+        return switch (type) {
+            case PAWN -> new Pawn(pieceColor);
+            case ROOK -> new Rook(pieceColor);
+            case KNIGHT -> new Knight(pieceColor);
+            case BISHOP -> new Bishop(pieceColor);
+            case QUEEN -> new Queen(pieceColor);
+            case KING -> new King(pieceColor);
+        };
+    }
+
+    public void updateBoard() {
+        BiMap<Position, Cell> cells = game.getBoard().getCells();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece piece = cells.get(new Position(i, j)).getPiece();
+                if(piece != null){
+                    tabJL[i][j].setIcon(pieceIcons.get(piece));
+                } else {
+                    tabJL[i][j].setIcon(null);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new Window();
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        updateBoard();
+    }
+}
