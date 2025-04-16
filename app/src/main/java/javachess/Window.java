@@ -58,18 +58,21 @@ public class Window extends JFrame implements Observer {
 //                    model.set(ii, jj);
                         if(mouseClick == null){
                             Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
+                            if (piece != null) {
+                                ArrayList<Cell> validCells = piece.decorator.getValidCells();
+                                System.out.println(validCells);
+                                for (Cell cell : validCells) {
+                                    Position pos = game.getBoard().getCells().getReverse(cell);
+                                    tabJL[pos.getX()][pos.getY()].setBackground(Color.YELLOW);
+                                }
+                            }
                             mouseClick = piece == null ? null : new Position(ii, jj);
                         } else {
                             Position mouseSecondClick = new Position(ii, jj);
-                            if(mouseClick.equals(mouseSecondClick)){
-                                mouseClick = null;
-                                return;
-                            }
-                            else {
+                            if (!mouseClick.equals(mouseSecondClick)) {
                                 game.setMove(mouseClick, mouseSecondClick);
-                                mouseClick = null;
                             }
-
+                            mouseClick = null;
                         }
                     }
                 });

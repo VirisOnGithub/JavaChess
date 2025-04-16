@@ -1,13 +1,16 @@
 package javachess.decorators;
 
-import javachess.*;
+import javachess.Board;
+import javachess.Cell;
+import javachess.Piece;
+import javachess.pieces.Bishop;
 
 import java.util.ArrayList;
 
-public class RookDecorator extends PieceDecorator {
+public class BishopDecorator extends PieceDecorator{
     private final PieceDecorator pieceDecorator;
 
-    public RookDecorator(Piece piece, Board board, PieceDecorator pieceDecorator) {
+    public BishopDecorator(Piece piece, Board board, PieceDecorator pieceDecorator) {
         this.pieceDecorator = pieceDecorator;
         this.piece = piece;
         this.board = board;
@@ -15,7 +18,12 @@ public class RookDecorator extends PieceDecorator {
 
     @Override
     public ArrayList<Cell> getValidCells() {
-        Directions[] directions = {Directions.TOP, Directions.BOTTOM, Directions.LEFT, Directions.RIGHT};
+        Directions[] directions = {
+                Directions.TOP_LEFT,
+                Directions.TOP_RIGHT,
+                Directions.BOTTOM_LEFT,
+                Directions.BOTTOM_RIGHT
+        };
         ArrayList<Cell> validCells = getDirectedCells(directions, this);
         validCells.addAll(pieceDecorator == null ? new ArrayList<>() : pieceDecorator.getValidCells());
         return validCells;

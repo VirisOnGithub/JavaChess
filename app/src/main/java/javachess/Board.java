@@ -25,21 +25,23 @@ public class Board {
             for(int j = 0; j < 8; j++){
                 if(i == 0 || i == 1 || i == 6 || i == 7){
                     Piece piece = null;
+                    Cell currentCell = new Cell(this);
                     if(i == 0 || i == 7){
                         PieceColor pieceColor = i == 0 ? PieceColor.BLACK : PieceColor.WHITE;
                         switch (j) {
-                            case 0, 7 -> piece = new Rook(pieceColor);
-                            case 1, 6 -> piece = new Knight(pieceColor);
-                            case 2, 5 -> piece = new Bishop(pieceColor);
-                            case 3 -> piece = new Queen(pieceColor);
-                            case 4 -> piece = new King(pieceColor);
+                            case 0, 7 -> piece = new Rook(pieceColor, currentCell);
+                            case 1, 6 -> piece = new Knight(pieceColor, currentCell);
+                            case 2, 5 -> piece = new Bishop(pieceColor, currentCell);
+                            case 3 -> piece = new Queen(pieceColor, currentCell);
+                            case 4 -> piece = new King(pieceColor, currentCell);
                         }
                     } else {
-                        piece = new Pawn(i == 1 ? PieceColor.BLACK : PieceColor.WHITE);
+                        piece = new Pawn(i == 1 ? PieceColor.BLACK : PieceColor.WHITE, currentCell);
                     }
-                    cells.put(new Position(i, j), new Cell(piece));
+                    currentCell.setPiece(piece);
+                    cells.put(new Position(i, j), currentCell);
                 } else {
-                    cells.put(new Position(i, j), new Cell());
+                    cells.put(new Position(i, j), new Cell(this));
                 }
             }
         }

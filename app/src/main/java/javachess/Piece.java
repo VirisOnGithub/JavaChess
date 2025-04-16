@@ -1,10 +1,37 @@
 package javachess;
 
-public abstract class Piece {
-    private PieceColor color;
+import javachess.decorators.PieceDecorator;
 
-    public Piece(PieceColor color) {
+public abstract class Piece {
+    private final PieceColor color;
+    private final Cell cell;
+    private boolean moved = false;
+    protected PieceDecorator decorator;
+
+    public Piece(PieceColor color, Cell cell) {
         this.color = color;
+        this.cell = cell;
+    }
+
+    public Piece(PieceColor color){
+        this.color = color;
+        this.cell = null;
+    }
+
+    public PieceColor getColor() {
+        return color;
+    }
+
+    public boolean hasMoved() {
+        return moved;
+    }
+
+    public void setMoved() {
+        this.moved = true;
+    }
+
+    public Cell getCell() {
+        return cell;
     }
 
     public abstract PieceType getType();
@@ -47,8 +74,7 @@ public abstract class Piece {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Piece)) return false;
-        Piece piece = (Piece) o;
+        if (!(o instanceof Piece piece)) return false;
         return piece.getType() == getType() && color == piece.color;
     }
 

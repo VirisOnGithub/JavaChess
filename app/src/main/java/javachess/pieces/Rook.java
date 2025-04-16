@@ -1,10 +1,17 @@
 package javachess.pieces;
 
+import javachess.Cell;
 import javachess.Piece;
 import javachess.PieceColor;
 import javachess.PieceType;
+import javachess.decorators.RookDecorator;
 
 public class Rook extends Piece {
+    public Rook(PieceColor color, Cell cell) {
+        super(color, cell);
+        decorator = new RookDecorator(this, cell.getBoard(), null);
+    }
+
     public Rook(PieceColor color) {
         super(color);
     }
