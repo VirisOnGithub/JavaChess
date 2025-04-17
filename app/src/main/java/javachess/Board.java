@@ -2,10 +2,8 @@ package javachess;
 
 import javachess.pieces.*;
 
-import java.awt.*;
-
 public class Board {
-    private BiMap<Position, Cell> cells;
+    private final BiMap<Position, Cell> cells;
 
     public Board(int size) {
         cells = new BiMap<>();
@@ -50,8 +48,33 @@ public class Board {
     void applyMove(Move move){
         Cell fromCell = cells.get(move.getFrom());
         Cell toCell = cells.get(move.getTo());
-        Piece piece = fromCell.getPiece();
-        fromCell.setPiece(null);
-        toCell.setPiece(piece);
+        if(fromCell.getPiece().getDecorator().getValidCells().contains(toCell)){
+            Piece piece = fromCell.getPiece();
+            fromCell.setPiece(null);
+            toCell.setPiece(piece);
+        } else {
+            System.err.println("Invalid move");
+        }
+    }
+
+    public void log() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece piece = cells.get(new Position(i, j)).getPiece();
+                if(piece != null){
+                    switch (piece.getType()){
+                        case PAWN -> System.out.print("P ");
+                        case ROOK -> System.out.print("R ");
+                        case KNIGHT -> System.out.print("N ");
+                        case BISHOP -> System.out.print("B ");
+                        case QUEEN -> System.out.print("Q ");
+                        case KING -> System.out.print("K ");
+                    }
+                } else {
+                    System.out.print("X ");
+                }
+            }
+            System.out.println();
+        }
     }
 }

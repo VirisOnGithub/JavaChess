@@ -24,9 +24,17 @@ public class Cell {
 
     public void setPiece(Piece piece) {
         this.piece = piece;
+        if(piece != null){
+            piece.setCell(this);
+        }
     }
 
     public boolean isEmpty() {
         return piece == null;
+    }
+
+    @Override
+    public String toString() {
+        return piece != null ? piece.toString() : "Empty";
     }
 }

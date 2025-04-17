@@ -55,7 +55,6 @@ public class Window extends JFrame implements Observer {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         System.out.println("Clicked at " + ii + " " + jj);
-//                    model.set(ii, jj);
                         if(mouseClick == null){
                             Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
                             if (piece != null) {
@@ -72,6 +71,10 @@ public class Window extends JFrame implements Observer {
                             if (!mouseClick.equals(mouseSecondClick)) {
                                 game.setMove(mouseClick, mouseSecondClick);
                             }
+                            for (Position p : game.getBoard().getCells().keySet()) {
+                                tabJL[p.getX()][p.getY()].setBackground((p.getX() + p.getY()) % 2 == 0 ? Color.WHITE : Color.BLACK);
+                            }
+                            game.getBoard().log();
                             mouseClick = null;
                         }
                     }

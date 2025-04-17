@@ -1,7 +1,7 @@
 package javachess;
 
 public class Player {
-    Game game;
+    final Game game;
 
     public Player(Game game) {
         this.game = game;

@@ -41,7 +41,7 @@ public abstract class PieceDecorator {
     protected void checkValidCell(Cell cell, Position nextCellPos, BiMap<Position, Cell> cells, ArrayList<Cell> validCells) {
         if (cells.contains(nextCellPos)) {
             Cell nextCell = cells.get(nextCellPos);
-            if (nextCell.isEmpty() || nextCell.getPiece().getColor() != cell.getPiece().getColor()) {
+            if (!nextCell.isEmpty() && nextCell.getPiece().getColor() != cell.getPiece().getColor()) {
                 validCells.add(nextCell);
             }
         }

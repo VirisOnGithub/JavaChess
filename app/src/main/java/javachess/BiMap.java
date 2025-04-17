@@ -1,6 +1,9 @@
 package javachess;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class BiMap<T1, T2>{
     private final HashMap<T1, T2> map1;
@@ -98,5 +101,35 @@ public class BiMap<T1, T2>{
             System.out.println("Error while checking value in BiMap: " + e.getMessage());
             return false;
         }
+    }
+
+    public Set<T1> keySet() {
+        try {
+            return map1.keySet();
+        } catch (Exception e) {
+            System.out.println("Error while getting keys from BiMap: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public Set<T2> reverseKeySet() {
+        try {
+            return map2.keySet();
+        } catch (Exception e) {
+            System.out.println("Error while getting values from BiMap: " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("BiMap{");
+        ArrayList<T1> keys = new ArrayList<>(map1.keySet());
+        for (T1 key : keys) {
+            sb.append(key).append("=").append(map1.get(key)).append(", \n");
+        }
+        sb.append("}");
+        return sb.toString();
     }
 }

@@ -4,7 +4,7 @@ import javachess.decorators.PieceDecorator;
 
 public abstract class Piece {
     private final PieceColor color;
-    private final Cell cell;
+    private Cell cell;
     private boolean moved = false;
     protected PieceDecorator decorator;
 
@@ -35,6 +35,10 @@ public abstract class Piece {
     }
 
     public abstract PieceType getType();
+
+    public PieceDecorator getDecorator() {
+        return decorator;
+    }
 
     public String findFile() {
         String filename = "";
@@ -81,5 +85,27 @@ public abstract class Piece {
     @Override
     public int hashCode() {
         return color.ordinal() * 10 + getType().ordinal();
+    }
+
+    @Override
+    public String toString() {
+        String type;
+        switch (getType()) {
+            case PAWN -> type = "P";
+            case ROOK -> type = "R";
+            case KNIGHT -> type = "N";
+            case BISHOP -> type = "B";
+            case QUEEN -> type = "Q";
+            case KING -> type = "K";
+            default -> throw new IllegalStateException("Unexpected value: " + getType());
+        }
+        return "Piece{" +
+                "type=" + type +
+                "; color=" + color +
+                '}';
+    }
+
+    public void setCell(Cell cell) {
+        this.cell = cell;
     }
 }
