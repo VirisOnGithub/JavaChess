@@ -52,9 +52,30 @@ public class Board {
             Piece piece = fromCell.getPiece();
             fromCell.setPiece(null);
             toCell.setPiece(piece);
+            piece.setMoved();
         } else {
             System.err.println("Invalid move");
         }
+    }
+
+    boolean isCheck(PieceColor color){
+        // find the king
+        for (Cell cell : cells.reverseKeySet()) {
+            Piece piece = cell.getPiece();
+            if (piece != null && piece.getType() == PieceType.KING && piece.getColor() == color) {
+                // check if any opponent piece can attack the king
+                for (Cell opponentCell : cells.reverseKeySet()) {
+                    Piece opponentPiece = opponentCell.getPiece();
+                    if (opponentPiece != null && opponentPiece.getColor() != color) {
+                        if (opponentPiece.getDecorator().getValidCells().contains(cell)) {
+                            return true; // King is in check
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+        return false; // King not found (should not happen)
     }
 
     public void log() {

@@ -1,11 +1,14 @@
 package javachess;
 
+import javachess.events.CheckEvent;
+import javachess.events.UpdateBoardEvent;
+
 import java.util.ArrayList;
 import java.util.Observable;
 
 public class Game extends Observable {
     private final ArrayList<Player> players;
-    private Move move;
+    protected Move move;
     private final Board board;
     private boolean gameDone = false;
     private int actualPlayer = 0;
@@ -13,6 +16,12 @@ public class Game extends Observable {
     public Game(){
         board = new Board();
         players = new ArrayList<>();
+        Window window = new Window(this);
+    }
+
+    public static void main(String[] args) {
+        Game game = new Game();
+        game.playGame();
     }
 
     public Move getMove() {
@@ -28,23 +37,41 @@ public class Game extends Observable {
     }
 
     public void playGame(){
-        players.add(new Player(this));
-        players.add(new Player(this));
+        players.add(new Player(this, PieceColor.WHITE));
+        players.add(new Player(this, PieceColor.BLACK));
 
         while(!gameDone){
-            Player currentPlayer = getNextPlayer();
-            Move move = currentPlayer.getMove();
-
+            Player currentPlayer = getCurrentPlayer();
+            if (board.isCheck(currentPlayer.getColor())) {
+                notifyAll(new CheckEvent());
+            }
+            boolean successMove;
+            do {
+                Move move = currentPlayer.getMove();
+                successMove = setMove(move.getFrom(), move.getTo());
+            } while (!successMove);
+            actualPlayer++;
         }
     }
 
-    public void setMove(Position from, Position to) {
-        move = new Move(from, to);
-        board.applyMove(move);
+    private void notifyAll(Event event){
         setChanged();
-        notifyObservers();
-        synchronized (this){
-            this.notify();
+        notifyObservers(event);
+    }
+
+    public boolean setMove(Position from, Position to) {
+        move = new Move(from, to);
+        Piece pieceFrom = board.getCells().get(from).getPiece();
+        if(pieceFrom == null || pieceFrom.getColor() != getCurrentPlayer().getColor()){
+            System.err.println("Invalid move");
+            return false;
         }
+        board.applyMove(move);
+        notifyAll(new UpdateBoardEvent());
+        return true;
+    }
+
+    public Player getCurrentPlayer() {
+        return players.get(actualPlayer % players.size());
     }
 }

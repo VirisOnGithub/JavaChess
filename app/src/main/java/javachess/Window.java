@@ -8,11 +8,14 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
+
+import javachess.events.CheckEvent;
+import javachess.events.UpdateBoardEvent;
 import javachess.pieces.*;
 
 import static java.lang.Math.min;
 
-public class Window extends JFrame implements Observer {
+public class Window extends JFrame implements Observer, EventVisitor {
 
     JLabel[][] tabJL;
     Map<Piece, ImageIcon> pieceIcons = new HashMap<>();
@@ -20,7 +23,7 @@ public class Window extends JFrame implements Observer {
     Position mouseClick;
     Game game;
 
-    public Window() {
+    public Window(Game game) {
         super("Java Chess");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("/white-king.png")));
@@ -35,7 +38,7 @@ public class Window extends JFrame implements Observer {
             }
         }
 
-        game = new Game();
+        this.game = game;
         game.addObserver(this);
         tabJL = new JLabel[8][8];
 
@@ -54,12 +57,12 @@ public class Window extends JFrame implements Observer {
                 jl.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        System.out.println("Clicked at " + ii + " " + jj);
+//                        System.out.println("Clicked at " + ii + " " + jj);
                         if(mouseClick == null){
                             Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
                             if (piece != null) {
                                 ArrayList<Cell> validCells = piece.decorator.getValidCells();
-                                System.out.println(validCells);
+//                                System.out.println(validCells);
                                 for (Cell cell : validCells) {
                                     Position pos = game.getBoard().getCells().getReverse(cell);
                                     tabJL[pos.getX()][pos.getY()].setBackground(Color.YELLOW);
@@ -69,12 +72,12 @@ public class Window extends JFrame implements Observer {
                         } else {
                             Position mouseSecondClick = new Position(ii, jj);
                             if (!mouseClick.equals(mouseSecondClick)) {
-                                game.setMove(mouseClick, mouseSecondClick);
+                                game.getCurrentPlayer().setMove(mouseClick, mouseSecondClick);
                             }
                             for (Position p : game.getBoard().getCells().keySet()) {
                                 tabJL[p.getX()][p.getY()].setBackground((p.getX() + p.getY()) % 2 == 0 ? Color.WHITE : Color.BLACK);
                             }
-                            game.getBoard().log();
+//                            game.getBoard().log();
                             mouseClick = null;
                         }
                     }
@@ -114,7 +117,7 @@ public class Window extends JFrame implements Observer {
     }
 
     public void updateBoard() {
-        BiMap<Position, Cell> cells = game.getBoard().getCells();
+        BiMap<Position, Cell> cells = this.game.getBoard().getCells();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Piece piece = cells.get(new Position(i, j)).getPiece();
@@ -127,12 +130,20 @@ public class Window extends JFrame implements Observer {
         }
     }
 
-    public static void main(String[] args) {
-        new Window();
+    @Override
+    public void update(Observable observable, Object o) {
+        if (o instanceof Event event){
+            visit(event);
+        }
     }
 
     @Override
-    public void update(Observable observable, Object o) {
+    public void visit(CheckEvent event) {
+        JOptionPane.showMessageDialog(this, "Check!");
+    }
+
+    @Override
+    public void visit(UpdateBoardEvent event) {
         updateBoard();
     }
 }

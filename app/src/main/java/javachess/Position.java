@@ -23,6 +23,11 @@ public class Position {
         this.y += dy;
     }
 
+    public void add(Position position) {
+        this.x += position.x;
+        this.y += position.y;
+    }
+
     public int getX() {
         return x;
     }
