@@ -1,5 +1,7 @@
 package javachess;
 
+import javachess.decorators.Directions;
+
 public class Position {
     private int x;
     private int y;
@@ -26,6 +28,11 @@ public class Position {
     public void add(Position position) {
         this.x += position.x;
         this.y += position.y;
+    }
+
+    public void add(Directions directions) {
+        this.x += directions.dx;
+        this.y += directions.dy;
     }
 
     public int getX() {

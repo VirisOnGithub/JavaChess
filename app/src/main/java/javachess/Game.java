@@ -48,7 +48,7 @@ public class Game extends Observable {
             boolean successMove;
             do {
                 Move move = currentPlayer.getMove();
-                successMove = setMove(move.getFrom(), move.getTo());
+                successMove = setMove(move.getFrom(), move.getTo(), false);
             } while (!successMove);
             actualPlayer++;
         }
@@ -59,14 +59,25 @@ public class Game extends Observable {
         notifyObservers(event);
     }
 
-    public boolean setMove(Position from, Position to) {
+    public boolean setMove(Position from, Position to, boolean roque) {
+        System.out.println("Move from " + from + " to " + to);
         move = new Move(from, to);
         Piece pieceFrom = board.getCells().get(from).getPiece();
         if(pieceFrom == null || pieceFrom.getColor() != getCurrentPlayer().getColor()){
-            System.err.println("Invalid move");
+            System.err.println("Invalid move, Piece: " + pieceFrom);
             return false;
         }
-        board.applyMove(move);
+        board.applyMove(move, roque);
+        // handle roque
+        System.out.println(Math.abs(from.getY() - to.getY()));
+        if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getY() - to.getY()) > 1) {
+            Position rookFrom = new Position(from.getX(), to.getY() + (to.getY() > from.getY() ? 1 : -1));
+            Position rookTo = new Position(from.getX(), to.getY() + (to.getY() > from.getY() ? -1 : 1));
+            Piece rook = board.getCells().get(rookFrom).getPiece();
+            if (rook != null && rook.getType() == PieceType.ROOK && rook.getColor() == pieceFrom.getColor()) {
+                setMove(rookFrom, rookTo, true);
+            }
+        }
         notifyAll(new UpdateBoardEvent());
         return true;
     }

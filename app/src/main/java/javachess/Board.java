@@ -45,10 +45,10 @@ public class Board {
         }
     }
 
-    void applyMove(Move move){
+    void applyMove(Move move, boolean roque){
         Cell fromCell = cells.get(move.getFrom());
         Cell toCell = cells.get(move.getTo());
-        if(fromCell.getPiece().getDecorator().getValidCells().contains(toCell)){
+        if(fromCell.getPiece().getDecorator().getValidCells().contains(toCell) || roque){
             Piece piece = fromCell.getPiece();
             fromCell.setPiece(null);
             toCell.setPiece(piece);

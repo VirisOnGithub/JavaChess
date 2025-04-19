@@ -11,7 +11,8 @@ import javachess.decorators.RoqueDecorator;
 public class King extends Piece {
     public King(PieceColor color, Cell cell) {
         super(color, cell);
-        decorator = new KingDecorator(this, cell.getBoard(), new RoqueDecorator(this, cell.getBoard(), null, PieceType.ROOK));
+        decorator = new KingDecorator(this, cell.getBoard(), new RoqueDecorator(this, cell.getBoard(), null));
+        // new RoqueDecorator(this, cell.getBoard(), null)
     }
 
     public King(PieceColor color) {
