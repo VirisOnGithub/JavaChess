@@ -1,25 +1,39 @@
 package javachess.parser;
 
+import javachess.PieceColor;
+import javachess.PieceType;
+import javachess.Position;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Parser {
     private static HashMap<String, String> headers;
-    private static String moves;
+    private static ArrayList<Instruction> moves;
+
+    private static final HashMap<String, PieceType> pieceMap = new HashMap<>() {{
+        put("K", PieceType.KING);
+        put("Q", PieceType.QUEEN);
+        put("R", PieceType.ROOK);
+        put("B", PieceType.BISHOP);
+        put("N", PieceType.KNIGHT);
+        put("P", PieceType.PAWN);
+    }};
 
     public static void main(String[] args) {
         String path = args.length == 0 ? "dummy.pgn" : args[0];
-        String game =  getGame(path);
+        String game = getGameFromPath(path);
         splitParts(game);
         for (String key : headers.keySet()) {
             System.out.println(key + ": " + headers.get(key));
         }
     }
 
-    private static String getGame(String path) {
+    private static String getGameFromPath(String path) {
         URL url = Parser.class.getResource('/' + path);
         assert url != null;
         File file = new File(url.getPath());
@@ -40,8 +54,7 @@ public class Parser {
         String[] parts = game.split("\n\n");
         assert parts.length == 2;
         headers = getHeaders(parts[0]);
-        moves = parts[1];
-    }
+        moves = getMoves(parts[1]);    }
 
     private static HashMap<String, String> getHeaders(String unparsedHeader) {
         String[] headers = unparsedHeader.split("\n");
@@ -59,5 +72,89 @@ public class Parser {
             headerMap.put(key, value);
         }
         return headerMap;
+    }
+
+    private static ArrayList<Instruction> getMoves(String unparsedMoves) {
+        String[] moves = unparsedMoves.replaceAll("\\{.*?\\}", "") // Remove comments
+                                      .replaceAll("\\n", " ") // Remove new lines
+                                      .split("[\\s.]+"); // Split by whitespace and dots (trimming it also)
+        ArrayList<Instruction> instructions = new ArrayList<>();
+        for (int i = 0; i < moves.length / 3; i+=3) {
+            String moveWhite = moves[i];
+            String moveBlack = moves[i + 1];
+            String[] bothMoves = new String[]{moveWhite, moveBlack};
+            for(int j = 0; j < bothMoves.length; j++) {
+                String move = bothMoves[j];
+                if (move.equals("1-0") || move.equals("0-1") || move.equals("1/2-1/2")) {
+                    break; // End of the game
+                }
+                Instruction instruction = parseMove(move, j == 0 ? PieceColor.WHITE : PieceColor.BLACK);
+                instructions.add(instruction);
+            }
+        }
+        return instructions;
+    }
+
+    private static Instruction parseMove(String move, PieceColor pieceColor) {
+        PieceType pieceType = null;
+        Position position;
+        boolean isCapture = false;
+        boolean isRoque = false;
+        boolean isCheck = false;
+        boolean isCheckMate = false;
+        Character ambiguity = null;
+        PieceType promoteTo = null;
+
+        // First check for roque
+        if (move.equals("O-O")) {
+            isRoque = true;
+            position = new Position(0, 0); // Dummy position
+        } else if (move.equals("O-O-O")) {
+            isRoque = true;
+            position = new Position(0, 0); // Dummy position
+        } else {
+            // Check for capture
+            if (move.contains("x")) {
+                isCapture = true;
+                move = move.replace("x", "");
+            }
+            // Check for check and checkmate
+            if (move.endsWith("+")) {
+                isCheck = true;
+                move = move.substring(0, move.length() - 1);
+            } else if (move.endsWith("#")) {
+                isCheckMate = true;
+                move = move.substring(0, move.length() - 1);
+            }
+            // Check for promotion
+            if (move.contains("=")) {
+                String[] parts = move.split("=");
+                promoteTo = pieceMap.get(parts[1]);
+                move = parts[0];
+            }
+            // Get the piece type
+            String pieceChar = String.valueOf(move.charAt(0));
+            if (pieceMap.containsKey(pieceChar)) {
+                pieceType = pieceMap.get(pieceChar);
+                move = move.substring(1);
+            } else {
+                pieceType = PieceType.PAWN; // Default to pawn
+            }
+            // Check for ambiguity
+            if (move.length() > 2) {
+                ambiguity = move.charAt(2);
+                move = move.substring(0, 2);
+            }
+        }
+        // Get the position
+        int file = move.charAt(0) - 'a';
+        int rank = move.charAt(1) - '1';
+        position = new Position(file, rank);
+        // Create the instruction
+        Instruction instruction = new Instruction(pieceColor, pieceType, position, isCapture, isRoque, isCheck, isCheckMate, ambiguity);
+        if (promoteTo != null) {
+            instruction.setPromoteTo(promoteTo);
+        }
+        return instruction;
     }
 }
