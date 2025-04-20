@@ -106,6 +106,15 @@ public class Window extends JFrame implements Observer, EventVisitor {
         });
     }
 
+    private ImageIcon getScaledIcon(ImageIcon icon, int size) {
+        return new ImageIcon(icon.getImage().getScaledInstance(size, size, Image.SCALE_SMOOTH));
+    }
+
+    private ImageIcon getScaledIcon(String path, int size) {
+        ImageIcon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource(path)));
+        return getScaledIcon(icon, size);
+    }
+
     public Piece createPiece(PieceType type, PieceColor pieceColor) {
         return switch (type) {
             case PAWN -> new Pawn(pieceColor);
