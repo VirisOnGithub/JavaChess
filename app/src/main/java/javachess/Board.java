@@ -2,6 +2,9 @@ package javachess;
 
 import javachess.pieces.*;
 
+import java.util.ArrayList;
+import java.util.function.Function;
+
 public class Board {
     private final BiMap<Position, Cell> cells;
 
@@ -77,6 +80,36 @@ public class Board {
         }
         return false; // King not found (should not happen)
     }
+
+    boolean isCheckMate(PieceColor color) {
+        if (!isCheck(color)) return false;
+
+        for (Cell from : cells.reverseKeySet()) {
+            Piece piece = from.getPiece();
+            if (piece != null && piece.getColor() == color) {
+                ArrayList<Cell> destinations = piece.getDecorator().getValidCells();
+
+                for (Cell to : destinations) {
+                    Piece captured = to.getPiece();
+
+                    to.setPiece(piece);
+                    from.setPiece(null);
+
+                    boolean stillInCheck = isCheck(color);
+
+                    from.setPiece(piece);
+                    to.setPiece(captured);
+
+                    if (!stillInCheck) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true; // Aucun coup possible pour sortir de l’échec
+    }
+
 
     public void log() {
         for (int i = 0; i < 8; i++) {

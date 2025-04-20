@@ -1,7 +1,6 @@
 package javachess;
 
-import javachess.events.CheckEvent;
-import javachess.events.UpdateBoardEvent;
+import javachess.events.*;
 
 public interface EventVisitor {
 
@@ -10,7 +9,7 @@ public interface EventVisitor {
     }
 
     void visit(CheckEvent event);
+    void visit(CheckMateEvent event);
     void visit(UpdateBoardEvent event);
-
 
 }

@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 
 import javachess.events.CheckEvent;
+import javachess.events.CheckMateEvent;
 import javachess.events.UpdateBoardEvent;
 import javachess.pieces.*;
 
@@ -140,6 +141,11 @@ public class Window extends JFrame implements Observer, EventVisitor {
     @Override
     public void visit(CheckEvent event) {
         JOptionPane.showMessageDialog(this, "Check!");
+    }
+
+    @Override
+    public void visit(CheckMateEvent event) {
+        JOptionPane.showMessageDialog(this, "CheckMate! Player " + event.getWinnerColor() + " wins!");
     }
 
     @Override

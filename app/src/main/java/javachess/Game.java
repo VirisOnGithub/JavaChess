@@ -1,6 +1,7 @@
 package javachess;
 
 import javachess.events.CheckEvent;
+import javachess.events.CheckMateEvent;
 import javachess.events.UpdateBoardEvent;
 
 import java.util.ArrayList;
@@ -36,12 +37,21 @@ public class Game extends Observable {
         return players.get(actualPlayer++ % players.size());
     }
 
+    public Player getPreviousPlayer() {
+        return players.get((actualPlayer - 1) % players.size());
+    }
+
     public void playGame(){
         players.add(new Player(this, PieceColor.WHITE));
         players.add(new Player(this, PieceColor.BLACK));
 
         while(!gameDone){
             Player currentPlayer = getCurrentPlayer();
+            if (board.isCheckMate(currentPlayer.getColor())) {
+                notifyAll(new CheckMateEvent(getPreviousPlayer().getColor()));
+                gameDone = true;
+                break;
+            }
             if (board.isCheck(currentPlayer.getColor())) {
                 notifyAll(new CheckEvent());
             }
