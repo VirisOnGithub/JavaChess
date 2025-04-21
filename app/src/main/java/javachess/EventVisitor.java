@@ -11,5 +11,5 @@ public interface EventVisitor {
     void visit(CheckEvent event);
     void visit(CheckMateEvent event);
     void visit(UpdateBoardEvent event);
-
+    void visit(PromotionEvent event);
 }

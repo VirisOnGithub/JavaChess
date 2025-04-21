@@ -1,0 +1,4 @@
+- Piece can't move unchecking the king when it's in check
+- bug when moving a piece taking its own piece (passing the turn instead of just cancelling the move)
+- the king should not be able to get in check position
+- promotion

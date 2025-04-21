@@ -2,6 +2,7 @@ package javachess;
 
 import javachess.events.CheckEvent;
 import javachess.events.CheckMateEvent;
+import javachess.events.PromotionEvent;
 import javachess.events.UpdateBoardEvent;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class Game extends Observable {
     private final Board board;
     private boolean gameDone = false;
     private int actualPlayer = 0;
+    public Piece promoteTo = null;
 
     public Game(){
         board = new Board();
@@ -79,7 +81,6 @@ public class Game extends Observable {
         }
         board.applyMove(move, roque);
         // handle roque
-        System.out.println(Math.abs(from.getY() - to.getY()));
         if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getY() - to.getY()) > 1) {
             Position rookFrom = new Position(from.getX(), to.getY() + (to.getY() > from.getY() ? 1 : -1));
             Position rookTo = new Position(from.getX(), to.getY() + (to.getY() > from.getY() ? -1 : 1));
@@ -87,6 +88,26 @@ public class Game extends Observable {
             if (rook != null && rook.getType() == PieceType.ROOK && rook.getColor() == pieceFrom.getColor()) {
                 setMove(rookFrom, rookTo, true);
             }
+        }
+        // handle promotion
+        if (pieceFrom.getType() == PieceType.PAWN && (to.getX() == 0 || to.getX() == 7)) {
+            notifyAll(new UpdateBoardEvent()); // show the pawn reaching the end
+            notifyAll(new PromotionEvent(to));
+            synchronized (this) {
+                try {
+                    // waiting for the player to choose the piece
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (promoteTo == null) {
+                System.err.println("Invalid promotion");
+                return false;
+            }
+            Cell pawnCell = board.getCells().get(to);
+            pawnCell.setPiece(promoteTo);
+            promoteTo.setCell(pawnCell);
         }
         notifyAll(new UpdateBoardEvent());
         return true;
