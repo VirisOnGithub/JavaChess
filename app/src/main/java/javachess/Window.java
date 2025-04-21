@@ -63,7 +63,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
                         if(mouseClick == null){
                             Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
                             if (piece != null) {
-                                ArrayList<Cell> validCells = piece.decorator.getValidCells();
+                                ArrayList<Cell> validCells = game.getBoard().getValidCellsForBoard(piece);
 //                                System.out.println(validCells);
                                 for (Cell cell : validCells) {
                                     Position pos = game.getBoard().getCells().getReverse(cell);
@@ -177,15 +177,14 @@ public class Window extends JFrame implements Observer, EventVisitor {
         Position piecePosition = event.getFrom();
         Cell pawnCell = game.getBoard().getCells().get(piecePosition);
         Piece pawn = pawnCell.getPiece();
-        Piece promoteTo = switch (choice) {
+
+        // Send back the promoted piece to the game
+        game.promoteTo = switch (choice) {
             case 1 -> new Rook(pawn.getColor(), pawnCell);
             case 2 -> new Bishop(pawn.getColor(), pawnCell);
             case 3 -> new Knight(pawn.getColor(), pawnCell);
             default -> new Queen(pawn.getColor(), pawnCell);
         };
-
-        // Send back the promoted piece to the game
-        game.promoteTo = promoteTo;
 
         synchronized (game) {
             game.notifyAll();

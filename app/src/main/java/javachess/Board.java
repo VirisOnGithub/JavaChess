@@ -3,7 +3,6 @@ package javachess;
 import javachess.pieces.*;
 
 import java.util.ArrayList;
-import java.util.function.Function;
 
 public class Board {
     private final BiMap<Position, Cell> cells;
@@ -51,7 +50,7 @@ public class Board {
     void applyMove(Move move, boolean roque){
         Cell fromCell = cells.get(move.getFrom());
         Cell toCell = cells.get(move.getTo());
-        if(fromCell.getPiece().getDecorator().getValidCells().contains(toCell) || roque){
+        if(getValidCellsForBoard(fromCell.getPiece()).contains(toCell) || roque){
             Piece piece = fromCell.getPiece();
             fromCell.setPiece(null);
             toCell.setPiece(piece);
@@ -95,12 +94,12 @@ public class Board {
                     to.setPiece(piece);
                     from.setPiece(null);
 
-                    boolean stillInCheck = isCheck(color);
+                    boolean inCheck = isCheck(color);
 
                     from.setPiece(piece);
                     to.setPiece(captured);
 
-                    if (!stillInCheck) {
+                    if (!inCheck) {
                         return false;
                     }
                 }
@@ -108,6 +107,28 @@ public class Board {
         }
 
         return true; // Aucun coup possible pour sortir de l’échec
+    }
+
+    ArrayList<Cell> getValidCellsForBoard(Piece piece) {
+        PieceColor color = piece.getColor();
+        Cell from = piece.getCell();
+        ArrayList<Cell> validCells = new ArrayList<>();
+        for (Cell to : piece.getDecorator().getValidCells()) {
+            Piece captured = to.getPiece();
+
+            to.setPiece(piece);
+            from.setPiece(null);
+
+            boolean inCheck = isCheck(color);
+
+            from.setPiece(piece);
+            to.setPiece(captured);
+
+            if (!inCheck) {
+                validCells.add(to);
+            }
+        }
+        return validCells;
     }
 
 
