@@ -7,6 +7,7 @@ import javachess.events.UpdateBoardEvent;
 
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.stream.Collectors;
 
 public class Game extends Observable {
     private final ArrayList<Player> players;
@@ -74,9 +75,33 @@ public class Game extends Observable {
     public boolean setMove(Position from, Position to, boolean roque) {
         System.out.println("Move from " + from + " to " + to);
         move = new Move(from, to);
-        Piece pieceFrom = board.getCells().get(from).getPiece();
-        if(pieceFrom == null || pieceFrom.getColor() != getCurrentPlayer().getColor()){
-            System.err.println("Invalid move, Piece: " + pieceFrom);
+        Cell fromCell = board.getCells().get(from);
+        Cell toCell = board.getCells().get(to);
+        Piece pieceFrom = fromCell.getPiece();
+        Piece pieceTo = toCell.getPiece();
+        if (pieceFrom == null) {
+            System.err.println("Invalid move: No piece at the source position.");
+            return false;
+        }
+
+        if (pieceFrom.getColor() != getCurrentPlayer().getColor()) {
+            System.err.println("Invalid move: The piece does not belong to the current player.");
+            return false;
+        }
+
+        if (!board.getValidCellsForBoard(fromCell.getPiece()).contains(toCell)) {
+            System.out.println(String.valueOf(board.getValidCellsForBoard(fromCell.getPiece())
+                    .stream()
+                    .map(Object::hashCode)
+                    .collect(Collectors.toCollection(ArrayList::new))));
+            System.out.println("\n");
+            System.out.println(toCell.hashCode());
+            System.err.println("Invalid move: The destination cell is not valid for the selected piece.");
+            return false;
+        }
+
+        if (pieceTo != null && pieceFrom.getColor() == pieceTo.getColor()) {
+            System.err.println("Invalid move: The destination cell contains a piece of the same color.");
             return false;
         }
         board.applyMove(move, roque);
