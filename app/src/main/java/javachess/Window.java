@@ -19,7 +19,7 @@ import static java.lang.Math.min;
 
 public class Window extends JFrame implements Observer, EventVisitor {
 
-    JLabel[][] tabJL;
+    CaseLabel[][] tabJL;
     Map<Piece, ImageIcon> pieceIcons = new HashMap<>();
 
     Position mouseClick;
@@ -42,14 +42,14 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
         this.game = game;
         game.addObserver(this);
-        tabJL = new JLabel[8][8];
+        tabJL = new CaseLabel[8][8];
 
         JPanel jp = new JPanel(new GridLayout(8, 8));
         setContentPane(jp);
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                JLabel jl = new JLabel();
+                CaseLabel jl = new CaseLabel();
                 tabJL[i][j] = jl;
                 jl.setOpaque(true);
                 jl.setBackground((i + j) % 2 == 0 ? Color.WHITE : Color.BLACK);
@@ -59,15 +59,17 @@ public class Window extends JFrame implements Observer, EventVisitor {
                 jl.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-//                        System.out.println("Clicked at " + ii + " " + jj);
                         if(mouseClick == null){
                             Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
                             if (piece != null && piece.getColor() == game.getCurrentPlayer().getColor()) {
                                 ArrayList<Cell> validCells = game.getBoard().getValidCellsForBoard(piece);
-//                                System.out.println(validCells);
                                 for (Cell cell : validCells) {
                                     Position pos = game.getBoard().getCells().getReverse(cell);
-                                    tabJL[pos.getX()][pos.getY()].setBackground(Color.YELLOW);
+                                    if(game.getBoard().getCells().get(pos).getPiece() != null){
+                                        tabJL[pos.getX()][pos.getY()].setDrawCircle(true, Color.RED);
+                                    } else {
+                                        tabJL[pos.getX()][pos.getY()].setDrawCircle(true);
+                                    }
                                 }
                             }
                             mouseClick = piece == null ? null : new Position(ii, jj);
@@ -77,9 +79,8 @@ public class Window extends JFrame implements Observer, EventVisitor {
                                 game.getCurrentPlayer().setMove(mouseClick, mouseSecondClick);
                             }
                             for (Position p : game.getBoard().getCells().keySet()) {
-                                tabJL[p.getX()][p.getY()].setBackground((p.getX() + p.getY()) % 2 == 0 ? Color.WHITE : Color.BLACK);
+                                tabJL[p.getX()][p.getY()].setDrawCircle(false);
                             }
-//                            game.getBoard().log();
                             mouseClick = null;
                         }
                     }
