@@ -29,13 +29,11 @@ public class KnightDecorator extends PieceDecorator {
         ArrayList<Cell> validCells = new ArrayList<>();
         BiMap<Position, Cell> cells = this.board.getCells();
         Cell cell = this.piece.getCell();
-        Position position = cells.getReverse(cell);
         for (Directions direction : directions) {
-            Position curr = new Position(position.getX() + direction.dx, position.getY() + direction.dy);
-            if (cells.contains(curr)) {
-                Cell nextCell = cells.get(curr);
-                if (nextCell.isEmpty() || nextCell.getPiece().getColor() != this.piece.getColor()) {
-                    validCells.add(nextCell);
+            Cell currCell = board.getNextCell(cell, direction);
+            if (cells.containsReverse(currCell)) {
+                if (currCell.isEmpty() || currCell.getPiece().getColor() != this.piece.getColor()) {
+                    validCells.add(currCell);
                 }
             }
         }

@@ -90,7 +90,7 @@ public class Game extends Observable {
             return false;
         }
 
-        if (!board.getValidCellsForBoard(fromCell.getPiece()).contains(toCell)) {
+        if (!board.getValidCellsForBoard(fromCell.getPiece()).contains(toCell) && !roque) {
             System.out.println(String.valueOf(board.getValidCellsForBoard(fromCell.getPiece())
                     .stream()
                     .map(Object::hashCode)

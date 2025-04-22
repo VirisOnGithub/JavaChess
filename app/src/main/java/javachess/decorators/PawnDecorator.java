@@ -22,16 +22,11 @@ public class PawnDecorator extends PieceDecorator {
                 : new Directions[]{Directions.BOTTOM_LEFT, Directions.BOTTOM_RIGHT};
         ArrayList<Cell> validCells = pieceDecorator == null ? new ArrayList<>() : pieceDecorator.getValidCells();
         BiMap<Position, Cell> cells = this.board.getCells();
-//        System.out.println(cells);
         Cell cell = this.piece.getCell();
         Position position = cells.getReverse(cell);
-//        System.out.println("cell: " + cell);
-//        System.out.println("position: " + position);
         int x = position.getX();
         int y = position.getY();
         Position forward = new Position(x + move.dx, y + move.dy);
-//        System.out.println("position: " + position);
-//        System.out.println("forward: " + forward);
         Position left = new Position(x + attack[0].dx, y + attack[0].dy);
         Position right = new Position(x + attack[1].dx, y + attack[1].dy);
         if (cells.contains(forward)) {

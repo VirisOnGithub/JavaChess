@@ -1,5 +1,6 @@
 package javachess;
 
+import javachess.decorators.Directions;
 import javachess.pieces.*;
 
 import java.util.ArrayList;
@@ -137,6 +138,12 @@ public class Board {
             }
         }
         return validCells;
+    }
+
+    public Cell getNextCell(Cell currentCell, Directions direction){
+        Position currentPosition = cells.getReverse(currentCell);
+        Position nextPosition = new Position(currentPosition.getX() + direction.dx, currentPosition.getY() + direction.dy);
+        return cells.get(nextPosition);
     }
 
 

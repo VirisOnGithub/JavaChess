@@ -29,25 +29,26 @@ public class RoqueDecorator extends PieceDecorator{
         }
         BiMap<Position, Cell> cells = board.getCells();
         Cell pieceCell = piece.getCell();
-        Position currentPosition = cells.getReverse(pieceCell);
 
         for (Directions direction : new Directions[]{Directions.LEFT, Directions.RIGHT}) {
-            Position tempPosition = new Position(currentPosition.getX(), currentPosition.getY()); // clone
-            while (cells.contains(tempPosition)) {
-                tempPosition.add(direction);
-                Cell actualCell = cells.get(tempPosition);
-                if (actualCell == null) {
+            Cell currCell = board.getNextCell(pieceCell, direction);
+            while (cells.containsReverse(currCell)) {
+                if (currCell == null) {
                     break;
                 }
-                Piece actualPiece = actualCell.getPiece();
+                Piece actualPiece = currCell.getPiece();
                 if (actualPiece != null && actualPiece.getType() == roqueWith
-                    && actualPiece.getColor() == piece.getColor() && !piece.hasMoved()) {
+                    && actualPiece.getColor() == piece.getColor() && !piece.hasMoved() && !actualPiece.hasMoved()) {
                     // Select the correct position to move the king
-                    tempPosition.add(direction == Directions.LEFT ? Directions.RIGHT : Directions.LEFT);
-                    validCells.add(cells.get(tempPosition));                }
-                if (!actualCell.isEmpty()) {
+//                    tempPosition.add(direction == Directions.LEFT ? Directions.RIGHT : Directions.LEFT);
+                    Cell tempCell = board.getNextCell(currCell, direction == Directions.LEFT ? Directions.RIGHT : Directions.LEFT);
+                    validCells.add(tempCell);
                     break;
                 }
+                if (!currCell.isEmpty()) {
+                    break;
+                }
+                currCell = board.getNextCell(currCell, direction);
             }
         }
         return validCells;

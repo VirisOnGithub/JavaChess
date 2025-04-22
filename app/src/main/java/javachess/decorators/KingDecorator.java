@@ -27,18 +27,18 @@ public class KingDecorator extends PieceDecorator {
         ArrayList<Cell> validCells = pieceDecorator == null ? new ArrayList<>() : pieceDecorator.getValidCells();
         BiMap<Position, Cell> cells = this.board.getCells();
         Cell cell = this.piece.getCell();
-        Position position = cells.getReverse(cell);
-        int x = position.getX();
-        int y = position.getY();
-        for (Directions direction : directions) {
-            Position newPosition = new Position(x + direction.dx, y + direction.dy);
-            if (cells.contains(newPosition)) {
-                Cell newCell = cells.get(newPosition);
+        for (Directions direction : getDirections(directions)) {
+            Cell newCell = board.getNextCell(cell, direction);
+            if (cells.containsReverse(newCell)) {
                 if (newCell.isEmpty() || newCell.getPiece().getColor() != this.piece.getColor()) {
                     validCells.add(newCell);
                 }
             }
         }
         return validCells;
+    }
+
+    private static Directions[] getDirections(Directions[] directions) {
+        return directions;
     }
 }

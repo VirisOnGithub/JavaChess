@@ -15,24 +15,18 @@ public abstract class PieceDecorator {
         ArrayList<Cell> validCells = new ArrayList<>();
         BiMap<Position, Cell> cells = currentDecorator.board.getCells();
         Cell cell = currentDecorator.piece.getCell();
-        Position position = cells.getReverse(cell);
         for (Directions direction : directions) {
-            Position curr = new Position(position.getX() + direction.dx, position.getY() + direction.dy);
-            int x = position.getX();
-            int y = position.getY();
-            while (cells.contains(curr)) {
-                Cell nextCell = cells.get(curr);
-                if (nextCell.isEmpty()) {
-                    validCells.add(nextCell);
+            Cell curr = board.getNextCell(cell, direction);
+            while (curr != null) {
+                if (curr.isEmpty()) {
+                    validCells.add(curr);
                 } else {
-                    if (nextCell.getPiece().getColor() != currentDecorator.piece.getColor()) {
-                        validCells.add(nextCell);
+                    if (curr.getPiece().getColor() != currentDecorator.piece.getColor()) {
+                        validCells.add(curr);
                     }
                     break;
                 }
-                x += direction.dx;
-                y += direction.dy;
-                curr.set(x, y);
+                curr = board.getNextCell(curr, direction);
             }
         }
         return validCells;
