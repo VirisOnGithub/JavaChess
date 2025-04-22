@@ -126,6 +126,7 @@ public class Game extends Observable {
                     e.printStackTrace();
                 }
             }
+            System.out.println("Je me réveille");
             if (promoteTo == null) {
                 System.err.println("Invalid promotion");
                 return false;

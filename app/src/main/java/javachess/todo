@@ -3,3 +3,4 @@
 - the king should not be able to get in check position (done)
 - promotion (done)
 - prise en passant
+- bug pour la promotion, piece qui s'update pas (done)

@@ -160,34 +160,44 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(UpdateBoardEvent event) {
+        System.out.println("Board Updated");
         updateBoard();
     }
 
     @Override
     public void visit(PromotionEvent event) {
-        PieceColor color = event.getFrom().getX() == 0 ? PieceColor.WHITE : PieceColor.BLACK;
-        ImageIcon[] options = Arrays.stream(new Piece[]{
-                new Queen(color),
-                new Rook(color),
-                new Bishop(color),
-                new Knight(color)
-        }).map(piece -> pieceIcons.getOrDefault(piece, null)).toArray(ImageIcon[]::new);
-        int choice = JOptionPane.showOptionDialog(this, "Choose a piece to promote to:", "Promotion",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-        Position piecePosition = event.getFrom();
-        Cell pawnCell = game.getBoard().getCells().get(piecePosition);
-        Piece pawn = pawnCell.getPiece();
+        // we instance a new thread to avoid blocking the main thread
+        new Thread(() -> {
+            // sleep to avoid process collision
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            PieceColor color = event.getFrom().getX() == 0 ? PieceColor.WHITE : PieceColor.BLACK;
+            ImageIcon[] options = Arrays.stream(new Piece[]{
+                    new Queen(color),
+                    new Rook(color),
+                    new Bishop(color),
+                    new Knight(color)
+            }).map(piece -> pieceIcons.getOrDefault(piece, null)).toArray(ImageIcon[]::new);
+            int choice = JOptionPane.showOptionDialog(this, "Choose a piece to promote to:", "Promotion",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+            Position piecePosition = event.getFrom();
+            Cell pawnCell = game.getBoard().getCells().get(piecePosition);
+            Piece pawn = pawnCell.getPiece();
 
-        // Send back the promoted piece to the game
-        game.promoteTo = switch (choice) {
-            case 1 -> new Rook(pawn.getColor(), pawnCell);
-            case 2 -> new Bishop(pawn.getColor(), pawnCell);
-            case 3 -> new Knight(pawn.getColor(), pawnCell);
-            default -> new Queen(pawn.getColor(), pawnCell);
-        };
+            // Send back the promoted piece to the game
+            game.promoteTo = switch (choice) {
+                case 1 -> new Rook(pawn.getColor(), pawnCell);
+                case 2 -> new Bishop(pawn.getColor(), pawnCell);
+                case 3 -> new Knight(pawn.getColor(), pawnCell);
+                default -> new Queen(pawn.getColor(), pawnCell);
+            };
 
-        synchronized (game) {
-            game.notifyAll();
-        }
+            synchronized (game){
+                game.notify();
+            }
+        }).start();
     }
 }
