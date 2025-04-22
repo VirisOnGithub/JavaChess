@@ -14,18 +14,6 @@ public class BiMap<T1, T2>{
         map2 = new HashMap<>();
     }
 
-    public BiMap(HashMap<T1, T2> map){
-        this.map1 = map;
-        this.map2 = new HashMap<>();
-        try {
-            for (T1 key : map.keySet()) {
-                map2.put(map.get(key), key);
-            }
-        } catch (Exception e) {
-            System.out.println("Error while creating BiMap: " + e.getMessage());
-        }
-    }
-
     public void put(T1 key, T2 value) {
         if(map1.containsKey(key)) {
             T2 temp = map1.get(key);

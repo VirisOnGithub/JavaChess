@@ -1,12 +1,10 @@
 package javachess;
 
-import javachess.events.CheckEvent;
-import javachess.events.CheckMateEvent;
-import javachess.events.PromotionEvent;
-import javachess.events.UpdateBoardEvent;
+import javachess.events.*;
 import javachess.pieces.Pawn;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.stream.Collectors;
 
@@ -17,6 +15,7 @@ public class Game extends Observable {
     private boolean gameDone = false;
     private int actualPlayer = 0;
     public Piece promoteTo = null;
+    private final HashMap<String, Integer> history = new HashMap<>();
 
     public Game(){
         board = new Board();
@@ -59,6 +58,12 @@ public class Game extends Observable {
             if (board.isCheck(currentPlayer.getColor())) {
                 notifyAll(new CheckEvent());
             }
+            int getPositionHistoryNumber = getPositionHistoryNumber();
+            if (getPositionHistoryNumber > 2) {
+                notifyAll(new DrawEvent("The game is a draw due to the threefold repetition rule."));
+                gameDone = true;
+                break;
+            }
             boolean successMove;
             do {
                 Move move = currentPlayer.getMove();
@@ -66,6 +71,10 @@ public class Game extends Observable {
             } while (!successMove);
             actualPlayer++;
         }
+    }
+
+    private int getPositionHistoryNumber() {
+        return history.compute(board.getIdString(), (key, value) -> value == null ? 1 : value + 1);
     }
 
     private void notifyAll(Event event){

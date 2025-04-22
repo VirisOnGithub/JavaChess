@@ -9,10 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
-import javachess.events.CheckEvent;
-import javachess.events.CheckMateEvent;
-import javachess.events.PromotionEvent;
-import javachess.events.UpdateBoardEvent;
+import javachess.events.*;
 import javachess.pieces.*;
 
 import static java.lang.Math.min;
@@ -71,6 +68,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
                                         tabJL[pos.getX()][pos.getY()].setDrawCircle(true);
                                     }
                                 }
+                                tabJL[ii][jj].setDrawCircle(true, new Color(85, 198, 255, 128));
                             }
                             mouseClick = piece == null ? null : new Position(ii, jj);
                         } else {
@@ -78,9 +76,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
                             if (!mouseClick.equals(mouseSecondClick)) {
                                 game.getCurrentPlayer().setMove(mouseClick, mouseSecondClick);
                             }
-                            for (Position p : game.getBoard().getCells().keySet()) {
-                                tabJL[p.getX()][p.getY()].setDrawCircle(false);
-                            }
+                            clearRingsFromBoard(game);
                             mouseClick = null;
                         }
                     }
@@ -106,6 +102,12 @@ public class Window extends JFrame implements Observer, EventVisitor {
                 }
             }
         });
+    }
+
+    private void clearRingsFromBoard(Game game) {
+        for (Position p : game.getBoard().getCells().keySet()) {
+            tabJL[p.getX()][p.getY()].setDrawCircle(false);
+        }
     }
 
     private ImageIcon getScaledIcon(ImageIcon icon, int size) {
@@ -200,5 +202,10 @@ public class Window extends JFrame implements Observer, EventVisitor {
                 game.notify();
             }
         }).start();
+    }
+
+    @Override
+    public void visit(DrawEvent event) {
+        JOptionPane.showMessageDialog(this, "Draw! " + event.getReason());
     }
 }

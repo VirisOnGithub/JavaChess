@@ -4,6 +4,9 @@ import javachess.decorators.Directions;
 import javachess.pieces.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.TreeSet;
 
 public class Board {
     private final BiMap<Position, Cell> cells;
@@ -63,6 +66,7 @@ public class Board {
             toCell.setPiece(piece);
             piece.setMoved();
             lastMove = move;
+            System.out.println(getIdString());
         } else {
             System.err.println("Invalid move");
         }
@@ -166,5 +170,29 @@ public class Board {
             }
             System.out.println();
         }
+    }
+
+    public String getIdString() {
+        HashSet<Position> cellsSet = new HashSet<>(cells.keySet());
+        // SOrt the cell to always have the same order
+        TreeSet<Position> sortedCells = new TreeSet<>((pos1, pos2) -> {
+            if (pos1.getX() != pos2.getX()) {
+                return Integer.compare(pos1.getX(), pos2.getX());
+            }
+            return Integer.compare(pos1.getY(), pos2.getY());
+        });
+        sortedCells.addAll(cellsSet);
+        StringBuilder idString = new StringBuilder();
+        for (Position position : sortedCells) {
+            Cell cell = cells.get(position);
+            Piece piece = cell.getPiece();
+            if (piece != null) {
+                // Piece has a custom unique hashCode for each piece
+                idString.append(piece.hashCode());
+            } else {
+                idString.append("X");
+            }
+        }
+        return idString.toString();
     }
 }
