@@ -16,4 +16,16 @@ public class Move {
     public Position getTo() {
         return to;
     }
+
+    public Position getMiddlePosition() {
+        return new Position((from.getX() + to.getX()) / 2, (from.getY() + to.getY()) / 2);
+    }
+
+    @Override
+    public String toString() {
+        return "Move{" +
+                "from=" + from +
+                ", to=" + to +
+                '}';
+    }
 }

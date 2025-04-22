@@ -6,10 +6,12 @@ import java.util.ArrayList;
 
 public class Board {
     private final BiMap<Position, Cell> cells;
+    private Move lastMove;
 
     public Board(int size) {
         cells = new BiMap<>();
         setInitialPieces();
+        lastMove = null;
     }
 
     public Board(){
@@ -18,6 +20,10 @@ public class Board {
 
     public BiMap<Position, Cell> getCells() {
         return cells;
+    }
+
+    public Move getLastMove() {
+        return lastMove;
     }
 
     public void setInitialPieces(){
@@ -55,6 +61,7 @@ public class Board {
             fromCell.setPiece(null);
             toCell.setPiece(piece);
             piece.setMoved();
+            lastMove = move;
         } else {
             System.err.println("Invalid move");
         }
@@ -85,6 +92,7 @@ public class Board {
 
         for (Cell from : cells.reverseKeySet()) {
             Piece piece = from.getPiece();
+            Position fromPos = cells.getReverse(from);
             if (piece != null && piece.getColor() == color) {
                 ArrayList<Cell> destinations = piece.getDecorator().getValidCells();
 

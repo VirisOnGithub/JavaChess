@@ -4,6 +4,7 @@ import javachess.events.CheckEvent;
 import javachess.events.CheckMateEvent;
 import javachess.events.PromotionEvent;
 import javachess.events.UpdateBoardEvent;
+import javachess.pieces.Pawn;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -135,6 +136,19 @@ public class Game extends Observable {
             pawnCell.setPiece(promoteTo);
             promoteTo.setCell(pawnCell);
         }
+
+        // handle en passant
+        if (pieceFrom.getType() == PieceType.PAWN && Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 1) {
+            Position enPassantPosition = new Position(from.getX(), to.getY());
+            Cell enPassantCell = board.getCells().get(enPassantPosition);
+            if (enPassantCell != null && enPassantCell.getPiece() instanceof Pawn) {
+                Piece enPassantPiece = enPassantCell.getPiece();
+                if (enPassantPiece.getColor() != pieceFrom.getColor()) {
+                    enPassantCell.setPiece(null);
+                }
+            }
+        }
+
         notifyAll(new UpdateBoardEvent());
         return true;
     }
