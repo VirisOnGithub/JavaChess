@@ -62,7 +62,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
 //                        System.out.println("Clicked at " + ii + " " + jj);
                         if(mouseClick == null){
                             Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
-                            if (piece != null) {
+                            if (piece != null && piece.getColor() == game.getCurrentPlayer().getColor()) {
                                 ArrayList<Cell> validCells = game.getBoard().getValidCellsForBoard(piece);
 //                                System.out.println(validCells);
                                 for (Cell cell : validCells) {

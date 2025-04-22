@@ -18,7 +18,6 @@ public class EnPassantDecorator extends PieceDecorator {
     public ArrayList<Cell> getValidCells() {
         ArrayList<Cell> validCells = pieceDecorator == null ? new ArrayList<>() : pieceDecorator.getValidCells();
         BiMap<Position, Cell> cells = this.board.getCells();
-        PieceColor pieceColor = this.piece.getColor();
         Position piecePosition = cells.getReverse(this.piece.getCell());
 
         Move lastMove = this.board.getLastMove();
@@ -36,12 +35,6 @@ public class EnPassantDecorator extends PieceDecorator {
                             validCells.add(enPassantCell);
                         }
                     }
-                } else {
-                    System.out.println("lastMove: " + lastMove);
-                    System.out.println("lastMoveFromX: " + lastMoveFromX);
-                    System.out.println("piecePosition.getX(): " + piecePosition.getX());
-                    System.out.println(lastMoveFromX - piecePosition.getX());
-                    System.out.println(Math.abs(lastMoveToX - piecePosition.getY()));
                 }
             }
         }
