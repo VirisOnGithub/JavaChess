@@ -58,6 +58,7 @@ public class Game extends Observable {
             if (board.isCheck(currentPlayer.getColor())) {
                 notifyAll(new CheckEvent());
             }
+            // handle positionHistory
             int getPositionHistoryNumber = getPositionHistoryNumber();
             if (getPositionHistoryNumber > 2) {
                 notifyAll(new DrawEvent("The game is a draw due to the threefold repetition rule."));
@@ -82,8 +83,8 @@ public class Game extends Observable {
         notifyObservers(event);
     }
 
-    public boolean setMove(Position from, Position to, boolean roque) {
-        System.out.println("Move from " + from + " to " + to);
+    public boolean setMove(Position from, Position to, boolean castling) {
+//        System.out.println("Move from " + from + " to " + to);
         move = new Move(from, to);
         Cell fromCell = board.getCells().get(from);
         Cell toCell = board.getCells().get(to);
@@ -99,7 +100,7 @@ public class Game extends Observable {
             return false;
         }
 
-        if (!board.getValidCellsForBoard(fromCell.getPiece()).contains(toCell) && !roque) {
+        if (!board.getValidCellsForBoard(fromCell.getPiece()).contains(toCell) && !castling) {
             System.out.println(String.valueOf(board.getValidCellsForBoard(fromCell.getPiece())
                     .stream()
                     .map(Object::hashCode)
@@ -114,10 +115,12 @@ public class Game extends Observable {
             System.err.println("Invalid move: The destination cell contains a piece of the same color.");
             return false;
         }
-        board.applyMove(move, roque);
-        // handle roque
+        board.applyMove(move, castling);
+        // handle castling
         if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getY() - to.getY()) > 1) {
-            Position rookFrom = new Position(from.getX(), to.getY() + (to.getY() > from.getY() ? 1 : -1));
+            System.out.println("Castling");
+
+            Position rookFrom = new Position(from.getX(), to.getY() > from.getY() ? 7 : 0);
             Position rookTo = new Position(from.getX(), to.getY() + (to.getY() > from.getY() ? -1 : 1));
             Piece rook = board.getCells().get(rookFrom).getPiece();
             if (rook != null && rook.getType() == PieceType.ROOK && rook.getColor() == pieceFrom.getColor()) {

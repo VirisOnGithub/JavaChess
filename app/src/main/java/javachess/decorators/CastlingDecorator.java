@@ -5,25 +5,25 @@ import javachess.PieceType;
 
 import java.util.ArrayList;
 
-public class RoqueDecorator extends PieceDecorator{
+public class CastlingDecorator extends PieceDecorator{
     private final PieceDecorator pieceDecorator;
-    private final PieceType roqueWith;
+    private final PieceType castleWith;
 
-    public RoqueDecorator(Piece piece, Board board, PieceDecorator pieceDecorator, PieceType roqueWith) {
+    public CastlingDecorator(Piece piece, Board board, PieceDecorator pieceDecorator, PieceType castleWith) {
         this.pieceDecorator = pieceDecorator;
         this.piece = piece;
         this.board = board;
-        this.roqueWith = roqueWith;
+        this.castleWith = castleWith;
     }
 
-    public RoqueDecorator(Piece piece, Board board, PieceDecorator pieceDecorator) {
+    public CastlingDecorator(Piece piece, Board board, PieceDecorator pieceDecorator) {
         this(piece, board, pieceDecorator, PieceType.ROOK);
     }
 
     @Override
     public ArrayList<Cell> getValidCells() {
         ArrayList<Cell> validCells = pieceDecorator == null ? new ArrayList<>() : pieceDecorator.getValidCells();
-        // Check if the king moved (no roque possible)
+        // Check if the king moved (no castling possible)
         if(piece.hasMoved()){
             return validCells;
         }
@@ -37,11 +37,11 @@ public class RoqueDecorator extends PieceDecorator{
                     break;
                 }
                 Piece actualPiece = currCell.getPiece();
-                if (actualPiece != null && actualPiece.getType() == roqueWith
+                if (actualPiece != null && actualPiece.getType() == castleWith
                     && actualPiece.getColor() == piece.getColor() && !piece.hasMoved() && !actualPiece.hasMoved()) {
                     // Select the correct position to move the king
 //                    tempPosition.add(direction == Directions.LEFT ? Directions.RIGHT : Directions.LEFT);
-                    Cell tempCell = board.getNextCell(currCell, direction == Directions.LEFT ? Directions.RIGHT : Directions.LEFT);
+                    Cell tempCell = board.getNextCell(board.getNextCell(pieceCell, direction), direction); // the king moves 2 times
                     validCells.add(tempCell);
                     break;
                 }
