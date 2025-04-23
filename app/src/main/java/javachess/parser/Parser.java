@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -28,9 +29,6 @@ public class Parser {
         String path = args.length == 0 ? "dummy.pgn" : args[0];
         String game = getGameFromPath(path);
         splitParts(game);
-        for (String key : headers.keySet()) {
-            System.out.println(key + ": " + headers.get(key));
-        }
     }
 
     private static String getGameFromPath(String path) {
@@ -54,7 +52,8 @@ public class Parser {
         String[] parts = game.split("\n\n");
         assert parts.length == 2;
         headers = getHeaders(parts[0]);
-        moves = getMoves(parts[1]);    }
+        moves = getMoves(parts[1]);
+    }
 
     private static HashMap<String, String> getHeaders(String unparsedHeader) {
         String[] headers = unparsedHeader.split("\n");
@@ -78,10 +77,11 @@ public class Parser {
         String[] moves = unparsedMoves.replaceAll("\\{.*?\\}", "") // Remove comments
                                       .replaceAll("\\n", " ") // Remove new lines
                                       .split("[\\s.]+"); // Split by whitespace and dots (trimming it also)
+        System.out.println(Arrays.toString(moves));
         ArrayList<Instruction> instructions = new ArrayList<>();
         for (int i = 0; i < moves.length / 3; i+=3) {
-            String moveWhite = moves[i];
-            String moveBlack = moves[i + 1];
+            String moveWhite = moves[i + 1];
+            String moveBlack = moves[i + 2];
             String[] bothMoves = new String[]{moveWhite, moveBlack};
             for(int j = 0; j < bothMoves.length; j++) {
                 String move = bothMoves[j];
@@ -99,7 +99,6 @@ public class Parser {
         PieceType pieceType = null;
         Position position;
         boolean isCapture = false;
-        boolean isRoque = false;
         boolean isCheck = false;
         boolean isCheckMate = false;
         Character ambiguity = null;
@@ -107,17 +106,17 @@ public class Parser {
 
         // First check for roque
         if (move.equals("O-O")) {
-            isRoque = true;
-            position = new Position(0, 0); // Dummy position
+            return new RoqueInstruction(false);
         } else if (move.equals("O-O-O")) {
-            isRoque = true;
-            position = new Position(0, 0); // Dummy position
+            return new RoqueInstruction(true);
         } else {
+            System.out.println("Move: " + move);
             // Check for capture
             if (move.contains("x")) {
                 isCapture = true;
                 move = move.replace("x", "");
             }
+//            System.out.println("Move after capture check: " + move);
             // Check for check and checkmate
             if (move.endsWith("+")) {
                 isCheck = true;
@@ -126,12 +125,14 @@ public class Parser {
                 isCheckMate = true;
                 move = move.substring(0, move.length() - 1);
             }
+//            System.out.println("Move after check checkmate check: " + move);
             // Check for promotion
             if (move.contains("=")) {
                 String[] parts = move.split("=");
                 promoteTo = pieceMap.get(parts[1]);
                 move = parts[0];
             }
+//            System.out.println("Move after promotion check: " + move);
             // Get the piece type
             String pieceChar = String.valueOf(move.charAt(0));
             if (pieceMap.containsKey(pieceChar)) {
@@ -140,18 +141,20 @@ public class Parser {
             } else {
                 pieceType = PieceType.PAWN; // Default to pawn
             }
+//            System.out.println("Move after piece type check: " + move);
             // Check for ambiguity
             if (move.length() > 2) {
                 ambiguity = move.charAt(2);
                 move = move.substring(0, 2);
             }
+//            System.out.println("Move after ambiguity check: " + move);
         }
         // Get the position
         int file = move.charAt(0) - 'a';
         int rank = move.charAt(1) - '1';
         position = new Position(file, rank);
         // Create the instruction
-        Instruction instruction = new Instruction(pieceColor, pieceType, position, isCapture, isRoque, isCheck, isCheckMate, ambiguity);
+        RegularInstruction instruction = new RegularInstruction(pieceColor, pieceType, position, isCapture, isCheck, isCheckMate, ambiguity);
         if (promoteTo != null) {
             instruction.setPromoteTo(promoteTo);
         }
