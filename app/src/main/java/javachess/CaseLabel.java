@@ -4,8 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CaseLabel extends JLabel {
+    private static final Color DEFAULT_COLOR = Color.GRAY;
     private boolean showCircle;
-    private Color color = Color.GRAY;
+    private Color color = DEFAULT_COLOR;
 
     public void setDrawCircle(boolean showCircle) {
         this.showCircle = showCircle;
@@ -23,16 +24,17 @@ public class CaseLabel extends JLabel {
         if (showCircle) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 128)); // Transparent color
+            g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 128));
 
-            // Set the thickness of the ring
-            float thickness = 8.0f; // Change this value to adjust the thickness
+            float thickness = 8.0f;
             g2d.setStroke(new BasicStroke(thickness));
 
-            int diameter = (int) (Math.min(getWidth(), getHeight()) * 0.9 - thickness); // Adjust for stroke thickness
+            int diameter = (int) (Math.min(getWidth(), getHeight()) * 0.9 - thickness);
             int x = (getWidth() - diameter) / 2;
             int y = (getHeight() - diameter) / 2;
-            g2d.drawOval(x, y, diameter, diameter); // Draw the ring
+            g2d.drawOval(x, y, diameter, diameter);
+
+            g2d.setColor(DEFAULT_COLOR);
         }
     }
 }

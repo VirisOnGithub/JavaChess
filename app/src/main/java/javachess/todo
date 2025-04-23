@@ -2,5 +2,6 @@
 - bug when moving a piece taking its own piece (passing the turn instead of just cancelling the move) (done)
 - the king should not be able to get in check position (done)
 - promotion (done)
-- prise en passant
+- prise en passant (done)
 - bug pour la promotion, piece qui s'update pas (done)
+- faire le pat

@@ -66,7 +66,7 @@ public class Board {
             toCell.setPiece(piece);
             piece.setMoved();
             lastMove = move;
-            System.out.println(getIdString());
+//            System.out.println(getIdString());
         } else {
             System.err.println("Invalid move");
         }

@@ -65,7 +65,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
                                     if(game.getBoard().getCells().get(pos).getPiece() != null){
                                         tabJL[pos.getX()][pos.getY()].setDrawCircle(true, Color.RED);
                                     } else {
-                                        tabJL[pos.getX()][pos.getY()].setDrawCircle(true);
+                                        tabJL[pos.getX()][pos.getY()].setDrawCircle(true, Color.GRAY);
                                     }
                                 }
                                 tabJL[ii][jj].setDrawCircle(true, new Color(85, 198, 255, 128));
@@ -163,7 +163,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(UpdateBoardEvent event) {
-        System.out.println("Board Updated");
+//        System.out.println("Board Updated");
         updateBoard();
     }
 
