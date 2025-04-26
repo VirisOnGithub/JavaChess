@@ -50,8 +50,8 @@ public class Game extends Observable {
 
         while(!gameDone){
             Player currentPlayer = getCurrentPlayer();
-            if (board.isCheckMate(currentPlayer.getColor())) {
-                notifyAll(new CheckMateEvent(getPreviousPlayer().getColor()));
+            if (board.canMoveWithoutMate(currentPlayer.getColor())) {
+                notifyAll(board.isCheck(currentPlayer.getColor()) ? new CheckMateEvent(getPreviousPlayer().getColor()) : new PatEvent());
                 gameDone = true;
                 break;
             }

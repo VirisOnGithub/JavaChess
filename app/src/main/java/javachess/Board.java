@@ -4,7 +4,6 @@ import javachess.decorators.Directions;
 import javachess.pieces.*;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.TreeSet;
 
@@ -92,9 +91,7 @@ public class Board {
         return false; // King not found (should not happen)
     }
 
-    boolean isCheckMate(PieceColor color) {
-        if (!isCheck(color)) return false;
-
+    public boolean canMoveWithoutMate(PieceColor color) {
         for (Cell from : cells.reverseKeySet()) {
             Piece piece = from.getPiece();
             Position fromPos = cells.getReverse(from);
@@ -119,7 +116,7 @@ public class Board {
             }
         }
 
-        return true; // Aucun coup possible pour sortir de l’échec
+        return true;
     }
 
     ArrayList<Cell> getValidCellsForBoard(Piece piece) {

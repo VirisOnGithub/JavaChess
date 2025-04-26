@@ -13,4 +13,5 @@ public interface EventVisitor {
     void visit(UpdateBoardEvent event);
     void visit(PromotionEvent event);
     void visit(DrawEvent event);
+    void visit(PatEvent event);
 }
