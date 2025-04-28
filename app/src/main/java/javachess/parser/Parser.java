@@ -106,9 +106,9 @@ public class Parser {
 
         // First check for roque
         if (move.equals("O-O")) {
-            return new CastlingInstruction(false);
+            return new CastlingInstruction(false, pieceColor);
         } else if (move.equals("O-O-O")) {
-            return new CastlingInstruction(true);
+            return new CastlingInstruction(true, pieceColor);
         } else {
             System.out.println("Move: " + move);
             // Check for capture

@@ -192,4 +192,15 @@ public class Board {
         }
         return idString.toString();
     }
+
+    public ArrayList<Position> getPieceOriginFromMove(Position to, PieceColor pieceColor, PieceType pieceType) {
+        ArrayList<Position> pieceOrigins = new ArrayList<>();
+        Cell toCell = cells.get(to);
+        for(Cell cell : cells.reverseKeySet()){
+            if(cell.getPiece().getColor() == pieceColor && cell.getPiece().getType() == pieceType && cell.getPiece().getDecorator().getValidCells().contains(toCell)){
+                pieceOrigins.add(cells.getReverse(cell));
+            }
+        }
+        return pieceOrigins;
+    }
 }
