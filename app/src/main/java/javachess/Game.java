@@ -17,6 +17,7 @@ public class Game extends Observable {
     private int actualPlayer = 0;
     public Piece promoteTo = null;
     private final HashMap<String, Integer> history = new HashMap<>();
+    private int fiftyMoveRuleCounter = 0;
 
     public Game(){
         board = new Board();
@@ -68,6 +69,11 @@ public class Game extends Observable {
                 gameDone = true;
                 break;
             }
+            if (fiftyMoveRuleCounter >= 50) {
+                notifyAll(new DrawEvent("The game is a draw due to the fifty-move rule."));
+                gameDone = true;
+                break;
+            }
             boolean successMove;
             do {
                 Move move = currentPlayer.getMove();
@@ -79,6 +85,18 @@ public class Game extends Observable {
 
     private int getPositionHistoryNumber() {
         return history.compute(board.getIdString(), (key, value) -> value == null ? 1 : value + 1);
+    }
+
+    private void incrementFiftyMoveRuleCounter() {
+        fiftyMoveRuleCounter++;
+    }
+
+    private void resetFiftyMoveRuleCounter() {
+        fiftyMoveRuleCounter = 0;
+    }
+
+    public int getFiftyMoveRuleCounter() {
+        return fiftyMoveRuleCounter;
     }
 
     private void notifyAll(Event event){
@@ -119,6 +137,11 @@ public class Game extends Observable {
         }
         Move lastMove = board.getLastMove();
         board.applyMove(move, castling);
+        if(pieceFrom.getType() == PieceType.PAWN && pieceTo != null){
+            incrementFiftyMoveRuleCounter();
+        } else {
+            resetFiftyMoveRuleCounter();
+        }
         // handle castling
         if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getX() - to.getX()) > 1) {
             System.out.println("Castling");
