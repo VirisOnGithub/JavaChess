@@ -22,12 +22,12 @@ public class EnPassantDecorator extends PieceDecorator {
 
         Move lastMove = this.board.getLastMove();
         if(lastMove != null && cells.get(lastMove.getTo()).getPiece() instanceof Pawn){
-            int lastMoveFromX = lastMove.getFrom().getX();
-            int lastMoveToX = lastMove.getTo().getX();
+            int lastMoveFromX = lastMove.getFrom().getY();
             int lastMoveToY = lastMove.getTo().getY();
+            int lastMoveToX = lastMove.getTo().getX();
 
-            if(Math.abs(lastMoveFromX - lastMoveToX) == 2){
-                if(lastMoveToX == piecePosition.getX() && Math.abs(lastMoveToY - piecePosition.getY()) == 1){
+            if(Math.abs(lastMoveFromX - lastMoveToY) == 2){
+                if(lastMoveToY == piecePosition.getY() && Math.abs(lastMoveToX - piecePosition.getX()) == 1){
                     Position enPassantPosition = lastMove.getMiddlePosition();
                     if(cells.contains(enPassantPosition)){
                         Cell enPassantCell = cells.get(enPassantPosition);

@@ -32,12 +32,12 @@ public class Board {
     public void setInitialPieces(){
         for(int i = 0; i < 8; i++){
             for(int j = 0; j < 8; j++){
-                if(i == 0 || i == 1 || i == 6 || i == 7){
+                if(j == 0 || j == 1 || j == 6 || j == 7){
                     Piece piece = null;
                     Cell currentCell = new Cell(this);
-                    if(i == 0 || i == 7){
-                        PieceColor pieceColor = i == 0 ? PieceColor.BLACK : PieceColor.WHITE;
-                        switch (j) {
+                    if(j == 0 || j == 7){
+                        PieceColor pieceColor = j == 0 ? PieceColor.BLACK : PieceColor.WHITE;
+                        switch (i) {
                             case 0, 7 -> piece = new Rook(pieceColor, currentCell);
                             case 1, 6 -> piece = new Knight(pieceColor, currentCell);
                             case 2, 5 -> piece = new Bishop(pieceColor, currentCell);
@@ -45,7 +45,7 @@ public class Board {
                             case 4 -> piece = new King(pieceColor, currentCell);
                         }
                     } else {
-                        piece = new Pawn(i == 1 ? PieceColor.BLACK : PieceColor.WHITE, currentCell);
+                        piece = new Pawn(j == 1 ? PieceColor.BLACK : PieceColor.WHITE, currentCell);
                     }
                     currentCell.setPiece(piece);
                     cells.put(new Position(i, j), currentCell);

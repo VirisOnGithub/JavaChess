@@ -84,7 +84,6 @@ public class Game extends Observable {
     }
 
     public boolean setMove(Position from, Position to, boolean castling) {
-//        System.out.println("Move from " + from + " to " + to);
         move = new Move(from, to);
         Cell fromCell = board.getCells().get(from);
         Cell toCell = board.getCells().get(to);
@@ -117,18 +116,18 @@ public class Game extends Observable {
         }
         board.applyMove(move, castling);
         // handle castling
-        if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getY() - to.getY()) > 1) {
+        if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getX() - to.getX()) > 1) {
             System.out.println("Castling");
 
-            Position rookFrom = new Position(from.getX(), to.getY() > from.getY() ? 7 : 0);
-            Position rookTo = new Position(from.getX(), to.getY() + (to.getY() > from.getY() ? -1 : 1));
+            Position rookFrom = new Position(to.getX() > from.getX() ? 7 : 0, from.getY());
+            Position rookTo = new Position(to.getX() + (to.getX() > from.getX() ? -1 : 1), from.getY());
             Piece rook = board.getCells().get(rookFrom).getPiece();
             if (rook != null && rook.getType() == PieceType.ROOK && rook.getColor() == pieceFrom.getColor()) {
                 setMove(rookFrom, rookTo, true);
             }
         }
         // handle promotion
-        if (pieceFrom.getType() == PieceType.PAWN && (to.getX() == 0 || to.getX() == 7)) {
+        if (pieceFrom.getType() == PieceType.PAWN && (to.getY() == 0 || to.getY() == 7)) {
             notifyAll(new UpdateBoardEvent()); // show the pawn reaching the end
             notifyAll(new PromotionEvent(to));
             synchronized (this) {
@@ -151,7 +150,7 @@ public class Game extends Observable {
 
         // handle en passant
         if (pieceFrom.getType() == PieceType.PAWN && Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 1) {
-            Position enPassantPosition = new Position(from.getX(), to.getY());
+            Position enPassantPosition = new Position(to.getX(), from.getY());
             Cell enPassantCell = board.getCells().get(enPassantPosition);
             if (enPassantCell != null && enPassantCell.getPiece() instanceof Pawn) {
                 Piece enPassantPiece = enPassantCell.getPiece();

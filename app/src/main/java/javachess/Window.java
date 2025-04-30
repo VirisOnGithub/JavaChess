@@ -44,8 +44,10 @@ public class Window extends JFrame implements Observer, EventVisitor {
         JPanel jp = new JPanel(new GridLayout(8, 8));
         setContentPane(jp);
 
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+
+        // We iterate the columns and then the lines (helps having the right orientation)
+        for (int j = 0; j < 8; j++) {
+            for (int i = 0; i < 8; i++) {
                 CaseLabel jl = new CaseLabel();
                 tabJL[i][j] = jl;
                 jl.setOpaque(true);
