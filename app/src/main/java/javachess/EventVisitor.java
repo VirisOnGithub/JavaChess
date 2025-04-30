@@ -14,4 +14,5 @@ public interface EventVisitor {
     void visit(PromotionEvent event);
     void visit(DrawEvent event);
     void visit(PatEvent event);
+    void visit(ChangePlayerEvent event);
 }

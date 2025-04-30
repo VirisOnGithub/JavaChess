@@ -3,6 +3,7 @@ package javachess;
 import javachess.events.*;
 import javachess.pieces.Pawn;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
@@ -50,12 +51,14 @@ public class Game extends Observable {
 
         while(!gameDone){
             Player currentPlayer = getCurrentPlayer();
-            if (board.canMoveWithoutMate(currentPlayer.getColor())) {
-                notifyAll(board.isCheck(currentPlayer.getColor()) ? new CheckMateEvent(getPreviousPlayer().getColor()) : new PatEvent());
+            PieceColor playerColor = currentPlayer.getColor();
+            notifyAll(new ChangePlayerEvent(playerColor));
+            if (board.canMoveWithoutMate(playerColor)) {
+                notifyAll(board.isCheck(playerColor) ? new CheckMateEvent(getPreviousPlayer().getColor()) : new PatEvent());
                 gameDone = true;
                 break;
             }
-            if (board.isCheck(currentPlayer.getColor())) {
+            if (board.isCheck(playerColor)) {
                 notifyAll(new CheckEvent());
             }
             // handle positionHistory
@@ -114,6 +117,7 @@ public class Game extends Observable {
             System.err.println("Invalid move: The destination cell contains a piece of the same color.");
             return false;
         }
+        Move lastMove = board.getLastMove();
         board.applyMove(move, castling);
         // handle castling
         if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getX() - to.getX()) > 1) {
@@ -126,38 +130,39 @@ public class Game extends Observable {
                 setMove(rookFrom, rookTo, true);
             }
         }
-        // handle promotion
-        if (pieceFrom.getType() == PieceType.PAWN && (to.getY() == 0 || to.getY() == 7)) {
-            notifyAll(new UpdateBoardEvent()); // show the pawn reaching the end
-            notifyAll(new PromotionEvent(to));
-            synchronized (this) {
-                try {
-                    // waiting for the player to choose the piece
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            System.out.println("Je me réveille");
-            if (promoteTo == null) {
-                System.err.println("Invalid promotion");
-                return false;
-            }
-            Cell pawnCell = board.getCells().get(to);
-            pawnCell.setPiece(promoteTo);
-            promoteTo.setCell(pawnCell);
-        }
 
         // handle en passant
         if (pieceFrom.getType() == PieceType.PAWN && Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 1) {
             Position enPassantPosition = new Position(to.getX(), from.getY());
             Cell enPassantCell = board.getCells().get(enPassantPosition);
-            if (enPassantCell != null && enPassantCell.getPiece() instanceof Pawn) {
+
+            System.out.println("To : " + to);
+            System.out.println("Last Move (middle pos) : " + lastMove.getMiddlePosition());
+            if (enPassantCell != null && enPassantCell.getPiece() instanceof Pawn && lastMove.getMiddlePosition().equals(to)) {
                 Piece enPassantPiece = enPassantCell.getPiece();
                 if (enPassantPiece.getColor() != pieceFrom.getColor()) {
                     enPassantCell.setPiece(null);
                 }
             }
+        }
+
+        // handle promotion
+        if (pieceFrom.getType() == PieceType.PAWN && (to.getY() == 0 || to.getY() == 7)) {
+            notifyAll(new UpdateBoardEvent()); // show the pawn reaching the end
+            notifyAll(new PromotionEvent(to));
+            if (promoteTo == null) {
+                synchronized (this) {
+                    try {
+                        // waiting for the player to choose the piece
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            Cell pawnCell = board.getCells().get(to);
+            pawnCell.setPiece(promoteTo);
+            promoteTo.setCell(pawnCell);
         }
 
         notifyAll(new UpdateBoardEvent());

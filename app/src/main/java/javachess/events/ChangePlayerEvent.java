@@ -1,0 +1,22 @@
+package javachess.events;
+
+import javachess.Event;
+import javachess.EventVisitor;
+import javachess.PieceColor;
+
+public class ChangePlayerEvent extends Event {
+    private final PieceColor color;
+
+    public ChangePlayerEvent(PieceColor color) {
+        this.color = color;
+    }
+
+    public PieceColor getColor() {
+        return color;
+    }
+
+    @Override
+    public void accept(EventVisitor visitor) {
+        visitor.visit(this);
+    }
+}

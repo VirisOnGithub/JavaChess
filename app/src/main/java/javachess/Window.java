@@ -45,7 +45,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
         setContentPane(jp);
 
 
-        // We iterate the columns and then the lines (helps having the right orientation)
+        // We iterate the columns and then the lines (helps to have the right orientation)
         for (int j = 0; j < 8; j++) {
             for (int i = 0; i < 8; i++) {
                 CaseLabel jl = new CaseLabel();
@@ -119,6 +119,10 @@ public class Window extends JFrame implements Observer, EventVisitor {
     private ImageIcon getScaledIcon(String path, int size) {
         ImageIcon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource(path)));
         return getScaledIcon(icon, size);
+    }
+
+    private void changePlayerWindowTitle(PieceColor color){
+        setTitle("Java Chess - " + color + " to play");
     }
 
     public Piece createPiece(PieceType type, PieceColor pieceColor) {
@@ -214,5 +218,10 @@ public class Window extends JFrame implements Observer, EventVisitor {
     @Override
     public void visit(PatEvent event) {
         JOptionPane.showMessageDialog(this, "Pat! This is a draw!");
+    }
+
+    @Override
+    public void visit(ChangePlayerEvent event) {
+        changePlayerWindowTitle(event.getColor());
     }
 }
