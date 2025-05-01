@@ -20,6 +20,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
     Map<Piece, ImageIcon> pieceIcons = new HashMap<>();
 
     Position mouseClick;
+    PieceColor lastColorClicked;
     final Game game;
 
     public Window(Game game) {
@@ -59,27 +60,32 @@ public class Window extends JFrame implements Observer, EventVisitor {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if(mouseClick == null){
-                            Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
-                            if (piece != null && piece.getColor() == game.getCurrentPlayer().getColor()) {
-                                ArrayList<Cell> validCells = game.getBoard().getValidCellsForBoard(piece);
-                                for (Cell cell : validCells) {
-                                    Position pos = game.getBoard().getCells().getReverse(cell);
-                                    if(game.getBoard().getCells().get(pos).getPiece() != null){
-                                        tabJL[pos.getX()][pos.getY()].setDrawCircle(true, Color.RED);
-                                    } else {
-                                        tabJL[pos.getX()][pos.getY()].setDrawCircle(true, Color.GRAY);
-                                    }
-                                }
-                                tabJL[ii][jj].setDrawCircle(true, new Color(85, 198, 255, 128));
+                            // check if first click was on a piece of another colour
+                            if(game.getCurrentPlayer().getColor() == game.getBoard().getCells().get(new Position(ii, jj)).getPiece().getColor()){
+                                Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
+                                colorAvailableCells(game, ii, jj);
+                                mouseClick = piece == null ? null : new Position(ii, jj);
+                                lastColorClicked = piece == null ? null : piece.getColor();
                             }
-                            mouseClick = piece == null ? null : new Position(ii, jj);
                         } else {
+                            Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
                             Position mouseSecondClick = new Position(ii, jj);
-                            if (!mouseClick.equals(mouseSecondClick)) {
-                                game.getCurrentPlayer().setMove(mouseClick, mouseSecondClick);
+                            if((piece != null && piece.getColor() == lastColorClicked) || mouseClick.equals(mouseSecondClick)){
+                                // emulate the first click
+                                clearRingsFromBoard(game);
+                                if(!mouseClick.equals(mouseSecondClick)){
+                                    mouseClick = null;
+                                    mouseClicked(null);
+                                } else {
+                                    mouseClick = null;
+                                }
+                            } else {
+                                if (!mouseClick.equals(mouseSecondClick)) {
+                                    game.getCurrentPlayer().setMove(mouseClick, mouseSecondClick);
+                                }
+                                clearRingsFromBoard(game);
+                                mouseClick = null;
                             }
-                            clearRingsFromBoard(game);
-                            mouseClick = null;
                         }
                     }
                 });
@@ -104,6 +110,22 @@ public class Window extends JFrame implements Observer, EventVisitor {
                 }
             }
         });
+    }
+
+    private void colorAvailableCells(Game game, int ii, int jj) {
+        Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
+        if (piece != null && piece.getColor() == game.getCurrentPlayer().getColor()) {
+            ArrayList<Cell> validCells = game.getBoard().getValidCellsForBoard(piece);
+            for (Cell cell : validCells) {
+                Position pos = game.getBoard().getCells().getReverse(cell);
+                if(game.getBoard().getCells().get(pos).getPiece() != null){
+                    tabJL[pos.getX()][pos.getY()].setDrawCircle(true, Color.RED);
+                } else {
+                    tabJL[pos.getX()][pos.getY()].setDrawCircle(true, Color.GRAY);
+                }
+            }
+            tabJL[ii][jj].setDrawCircle(true, new Color(85, 198, 255, 128));
+        }
     }
 
     private void clearRingsFromBoard(Game game) {
@@ -169,7 +191,6 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(UpdateBoardEvent event) {
-//        System.out.println("Board Updated");
         updateBoard();
     }
 
