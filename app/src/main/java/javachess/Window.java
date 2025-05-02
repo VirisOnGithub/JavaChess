@@ -96,6 +96,11 @@ public class Window extends JFrame implements Observer, EventVisitor {
             }
         }
 
+        for(int i = 0; i < 8; i++){
+            tabJL[i][7].setLowerRightCornerLabel(String.valueOf((char) ('a' + i)));
+            tabJL[0][i].setUpperLeftCornerLabel(String.valueOf(8-i));
+        }
+
         updateBoard();
 
         pack();
