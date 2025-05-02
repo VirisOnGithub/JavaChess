@@ -42,7 +42,7 @@ sourceSets {
 
 application {
     // Define the main class for the application.
-    mainClass = 'javachess.Game'
+    mainClass = 'javachess.ChessGameMenu'
 }
 
 tasks.named('test') {

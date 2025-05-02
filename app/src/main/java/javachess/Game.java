@@ -3,7 +3,6 @@ package javachess;
 import javachess.events.*;
 import javachess.pieces.Pawn;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
@@ -18,8 +17,10 @@ public class Game extends Observable {
     public Piece promoteTo = null;
     private final HashMap<String, Integer> history = new HashMap<>();
     private int fiftyMoveRuleCounter = 0;
+    private final ConfigParser configParser;
 
     public Game(){
+        this.configParser = new ConfigParser();
         board = new Board();
         players = new ArrayList<>();
         Window window = new Window(this);

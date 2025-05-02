@@ -60,12 +60,14 @@ public class Window extends JFrame implements Observer, EventVisitor {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if(mouseClick == null){
+                            Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
                             // check if first click was on a piece of another colour
-                            if(game.getCurrentPlayer().getColor() == game.getBoard().getCells().get(new Position(ii, jj)).getPiece().getColor()){
-                                Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
-                                colorAvailableCells(game, ii, jj);
-                                mouseClick = piece == null ? null : new Position(ii, jj);
-                                lastColorClicked = piece == null ? null : piece.getColor();
+                            if (piece != null) {
+                                if(game.getCurrentPlayer().getColor() == piece.getColor()){
+                                    colorAvailableCells(game, ii, jj);
+                                    mouseClick = piece == null ? null : new Position(ii, jj);
+                                    lastColorClicked = piece == null ? null : piece.getColor();
+                                }
                             }
                         } else {
                             Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
@@ -144,7 +146,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
     }
 
     private void changePlayerWindowTitle(PieceColor color){
-        setTitle("Java Chess - " + color + " to play");
+        setTitle("Chess Master - " + color + " to play");
     }
 
     public Piece createPiece(PieceType type, PieceColor pieceColor) {
