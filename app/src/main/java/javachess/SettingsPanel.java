@@ -89,7 +89,7 @@ public class SettingsPanel extends JDialog {
         // Load the current piece set from the config file
         String currentPieceSet = configParser.getValue("CHESS_PIECE_SET", "Classic");
 
-        pieceSetDropdown = new JComboBox<>(new String[]{"Classic", "Modern", "Fantasy", "Wooden"});
+        pieceSetDropdown = new JComboBox<>(new String[]{"Classic", "Cardinal", "California"});
         pieceSetDropdown.setSelectedItem(currentPieceSet);
         styleDropdown(pieceSetDropdown);
 

@@ -91,7 +91,7 @@ public class Board {
         return false; // King not found (should not happen)
     }
 
-    public boolean canMoveWithoutMate(PieceColor color) {
+    public boolean cannotMoveWithoutMate(PieceColor color) {
         for (Cell from : cells.reverseKeySet()) {
             Piece piece = from.getPiece();
             Position fromPos = cells.getReverse(from);

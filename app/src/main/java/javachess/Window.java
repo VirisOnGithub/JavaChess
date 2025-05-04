@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
+import javachess.audio.AudioPlayer;
 import javachess.events.*;
 import javachess.pieces.*;
 
@@ -26,14 +27,15 @@ public class Window extends JFrame implements Observer, EventVisitor {
     public Window(Game game) {
         super("Java Chess");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("/white-king.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("/classic/wK.png")));
         setPreferredSize(new Dimension(800, 800));
 
         for(PieceColor pieceColor : PieceColor.values()){
             for(PieceType type: PieceType.values()) {
                 Piece piece = createPiece(type, pieceColor);
                 String filename = piece.findFile();
-                ImageIcon icon = new ImageIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource('/' + filename))).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+                String entireFilename = '/' + game.configParser.getValue("CHESS_PIECE_SET", "Classic").toLowerCase() + '/' + filename;
+                ImageIcon icon = new ImageIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource(entireFilename))).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
                 pieceIcons.put(piece, icon);
             }
         }
@@ -59,18 +61,17 @@ public class Window extends JFrame implements Observer, EventVisitor {
                 jl.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
+                        Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
                         if(mouseClick == null){
-                            Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
                             // check if first click was on a piece of another colour
                             if (piece != null) {
                                 if(game.getCurrentPlayer().getColor() == piece.getColor()){
                                     colorAvailableCells(game, ii, jj);
-                                    mouseClick = piece == null ? null : new Position(ii, jj);
-                                    lastColorClicked = piece == null ? null : piece.getColor();
+                                    mouseClick = new Position(ii, jj);
+                                    lastColorClicked = piece.getColor();
                                 }
                             }
                         } else {
-                            Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
                             Position mouseSecondClick = new Position(ii, jj);
                             if((piece != null && piece.getColor() == lastColorClicked) || mouseClick.equals(mouseSecondClick)){
                                 // emulate the first click
@@ -251,5 +252,10 @@ public class Window extends JFrame implements Observer, EventVisitor {
     @Override
     public void visit(ChangePlayerEvent event) {
         changePlayerWindowTitle(event.getColor());
+    }
+
+    @Override
+    public void visit(SoundEvent event) {
+        AudioPlayer.playAudio(event.getSound());
     }
 }

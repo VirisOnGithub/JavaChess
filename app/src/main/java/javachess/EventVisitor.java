@@ -15,4 +15,5 @@ public interface EventVisitor {
     void visit(DrawEvent event);
     void visit(PatEvent event);
     void visit(ChangePlayerEvent event);
+    void visit(SoundEvent event);
 }

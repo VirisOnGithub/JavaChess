@@ -17,7 +17,7 @@ public class Game extends Observable {
     public Piece promoteTo = null;
     private final HashMap<String, Integer> history = new HashMap<>();
     private int fiftyMoveRuleCounter = 0;
-    private final ConfigParser configParser;
+    protected final ConfigParser configParser;
 
     public Game(){
         this.configParser = new ConfigParser();
@@ -40,7 +40,7 @@ public class Game extends Observable {
     }
 
     public Player getNextPlayer() {
-        return players.get(actualPlayer++ % players.size());
+        return players.get((actualPlayer + 1) % players.size());
     }
 
     public Player getPreviousPlayer() {
@@ -51,11 +51,14 @@ public class Game extends Observable {
         players.add(new Player(this, PieceColor.WHITE));
         players.add(new Player(this, PieceColor.BLACK));
 
+        notifyAll(new SoundEvent("game-start"));
+
         while(!gameDone){
             Player currentPlayer = getCurrentPlayer();
             PieceColor playerColor = currentPlayer.getColor();
             notifyAll(new ChangePlayerEvent(playerColor));
-            if (board.canMoveWithoutMate(playerColor)) {
+            if (board.cannotMoveWithoutMate(playerColor)) {
+                notifyAll(new SoundEvent("game-end"));
                 notifyAll(board.isCheck(playerColor) ? new CheckMateEvent(getPreviousPlayer().getColor()) : new PatEvent());
                 gameDone = true;
                 break;
@@ -66,11 +69,13 @@ public class Game extends Observable {
             // handle positionHistory
             int getPositionHistoryNumber = getPositionHistoryNumber();
             if (getPositionHistoryNumber > 2) {
+                notifyAll(new SoundEvent("game-end"));
                 notifyAll(new DrawEvent("The game is a draw due to the threefold repetition rule."));
                 gameDone = true;
                 break;
             }
             if (fiftyMoveRuleCounter >= 50) {
+                notifyAll(new SoundEvent("game-end"));
                 notifyAll(new DrawEvent("The game is a draw due to the fifty-move rule."));
                 gameDone = true;
                 break;
@@ -106,11 +111,13 @@ public class Game extends Observable {
     }
 
     public boolean setMove(Position from, Position to, boolean castling) {
+        boolean soundPlayed = false;
         move = new Move(from, to);
         Cell fromCell = board.getCells().get(from);
         Cell toCell = board.getCells().get(to);
         Piece pieceFrom = fromCell.getPiece();
         Piece pieceTo = toCell.getPiece();
+        // should never happen with the current move system
         if (pieceFrom == null) {
             System.err.println("Invalid move: No piece at the source position.");
             return false;
@@ -118,6 +125,8 @@ public class Game extends Observable {
 
         if (pieceFrom.getColor() != getCurrentPlayer().getColor()) {
             System.err.println("Invalid move: The piece does not belong to the current player.");
+            notifyAll(new SoundEvent("illegal"));
+            soundPlayed = true;
             return false;
         }
 
@@ -129,12 +138,17 @@ public class Game extends Observable {
             System.out.println("\n");
             System.out.println(toCell.hashCode());
             System.err.println("Invalid move: The destination cell is not valid for the selected piece.");
+            notifyAll(new SoundEvent("illegal"));
+            soundPlayed = true;
             return false;
         }
 
-        if (pieceTo != null && pieceFrom.getColor() == pieceTo.getColor()) {
-            System.err.println("Invalid move: The destination cell contains a piece of the same color.");
-            return false;
+        if (pieceTo != null) {
+            if(pieceFrom.getColor() == pieceTo.getColor()){
+                System.err.println("Invalid move: The destination cell contains a piece of the same color.");
+                notifyAll(new SoundEvent("illegal"));
+                return false;
+            }
         }
         Move lastMove = board.getLastMove();
         board.applyMove(move, castling);
@@ -146,6 +160,7 @@ public class Game extends Observable {
         // handle castling
         if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getX() - to.getX()) > 1) {
             System.out.println("Castling");
+            notifyAll(new SoundEvent("castle"));
 
             Position rookFrom = new Position(to.getX() > from.getX() ? 7 : 0, from.getY());
             Position rookTo = new Position(to.getX() + (to.getX() > from.getX() ? -1 : 1), from.getY());
@@ -155,13 +170,15 @@ public class Game extends Observable {
             }
         }
 
+        boolean enPassant = false;
+
         // handle en passant
         if (pieceFrom.getType() == PieceType.PAWN && Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 1) {
+            enPassant = true;
+
             Position enPassantPosition = new Position(to.getX(), from.getY());
             Cell enPassantCell = board.getCells().get(enPassantPosition);
 
-            System.out.println("To : " + to);
-            System.out.println("Last Move (middle pos) : " + lastMove.getMiddlePosition());
             if (enPassantCell != null && enPassantCell.getPiece() instanceof Pawn && lastMove.getMiddlePosition().equals(to)) {
                 Piece enPassantPiece = enPassantCell.getPiece();
                 if (enPassantPiece.getColor() != pieceFrom.getColor()) {
@@ -172,6 +189,8 @@ public class Game extends Observable {
 
         // handle promotion
         if (pieceFrom.getType() == PieceType.PAWN && (to.getY() == 0 || to.getY() == 7)) {
+            notifyAll(new SoundEvent("promote"));
+            soundPlayed = true;
             notifyAll(new UpdateBoardEvent()); // show the pawn reaching the end
             notifyAll(new PromotionEvent(to));
             if (promoteTo == null) {
@@ -187,6 +206,20 @@ public class Game extends Observable {
             Cell pawnCell = board.getCells().get(to);
             pawnCell.setPiece(promoteTo);
             promoteTo.setCell(pawnCell);
+        }
+
+        if(!soundPlayed && board.isCheck(getNextPlayer().getColor())){
+            notifyAll(new SoundEvent("move-check"));
+            soundPlayed = true;
+        }
+
+        if(!soundPlayed && (pieceTo != null || enPassant)){
+            notifyAll(new SoundEvent("capture"));
+            soundPlayed = true;
+        }
+
+        if(!soundPlayed){
+            notifyAll(new SoundEvent("move-self"));
         }
 
         notifyAll(new UpdateBoardEvent());

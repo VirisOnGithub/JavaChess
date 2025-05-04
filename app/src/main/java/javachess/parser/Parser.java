@@ -116,7 +116,6 @@ public class Parser {
                 isCapture = true;
                 move = move.replace("x", "");
             }
-//            System.out.println("Move after capture check: " + move);
             // Check for check and checkmate
             if (move.endsWith("+")) {
                 isCheck = true;

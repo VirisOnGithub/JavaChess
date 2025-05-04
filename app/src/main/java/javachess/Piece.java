@@ -44,31 +44,30 @@ public abstract class Piece {
         String filename = "";
         switch (color) {
             case WHITE:
-                filename += "white";
+                filename += "w";
                 break;
             case BLACK:
-                filename += "black";
+                filename += "b";
                 break;
         }
-        filename += "-";
         switch (getType()) {
             case PAWN:
-                filename += "pawn";
+                filename += "P";
                 break;
             case ROOK:
-                filename += "rook";
+                filename += "R";
                 break;
             case KNIGHT:
-                filename += "knight";
+                filename += "N";
                 break;
             case BISHOP:
-                filename += "bishop";
+                filename += "B";
                 break;
             case QUEEN:
-                filename += "queen";
+                filename += "Q";
                 break;
             case KING:
-                filename += "king";
+                filename += "K";
                 break;
         }
         filename += ".png";
