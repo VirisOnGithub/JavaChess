@@ -68,4 +68,12 @@ public class ConfigParser {
     public void setValue(String key, String value) {
         configMap.put(key, value);
     }
+
+    public Language getLanguage() {
+        String language = getValue("CHESS_LANGUAGE", "English");
+        return switch (language) {
+            case "French" -> Language.FRENCH;
+            default -> Language.ENGLISH;
+        };
+    }
 }

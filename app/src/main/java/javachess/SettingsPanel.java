@@ -12,6 +12,7 @@ import java.util.Map;
 public class SettingsPanel extends JDialog {
 
     private JComboBox<String> pieceSetDropdown;
+    private JComboBox<String> languageDropdown;
     private JCheckBox soundToggle;
     private ConfigParser configParser;
 
@@ -31,6 +32,7 @@ public class SettingsPanel extends JDialog {
 
         // Add components to the main panel
         addTitleLabel(mainPanel);
+        addLanguageDropdown(mainPanel);
         addPieceSetDropdown(mainPanel);
         addSoundToggle(mainPanel);
         addSaveButton(mainPanel);
@@ -47,7 +49,8 @@ public class SettingsPanel extends JDialog {
             // Check if the file is empty
             if (writer.toString().isEmpty()) {
                 writer.write("CHESS_PIECE_SET=Classic\n");
-                writer.write("CHESS_SOUND_ENABLED=true");
+                writer.write("CHESS_SOUND_ENABLED=true\n");
+                writer.write("CHESS_LANGUAGE=English\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,6 +84,32 @@ public class SettingsPanel extends JDialog {
     }
 
     /**
+     * Adds the language dropdown to the main panel.
+     */
+    private void addLanguageDropdown(JPanel panel) {
+        JLabel languageLabel = createLabel("Language: ");
+
+        // Load the current language from the config file
+        String currentLanguage = configParser.getValue("CHESS_LANGUAGE", "English");
+
+        languageDropdown = new JComboBox<>(new String[]{"English", "French"});
+        languageDropdown.setSelectedItem(currentLanguage);
+        styleDropdown(languageDropdown);
+
+        JPanel languagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        languagePanel.setBackground(new Color(30, 30, 30));
+        languagePanel.add(languageLabel);
+        languagePanel.add(languageDropdown);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 0, 10, 0);
+        panel.add(languagePanel, gbc);
+    }
+
+    /**
      * Adds the piece set dropdown to the main panel.
      */
     private void addPieceSetDropdown(JPanel panel) {
@@ -100,7 +129,7 @@ public class SettingsPanel extends JDialog {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 10, 0);
         panel.add(pieceSetPanel, gbc);
@@ -126,7 +155,7 @@ public class SettingsPanel extends JDialog {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 20, 0);
         panel.add(soundPanel, gbc);
@@ -145,7 +174,7 @@ public class SettingsPanel extends JDialog {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 0, 0, 0);
         panel.add(saveButton, gbc);
@@ -156,11 +185,14 @@ public class SettingsPanel extends JDialog {
      */
     private void onSave(ActionEvent e) {
         String selectedPieceSet = (String) pieceSetDropdown.getSelectedItem();
+        String selectedLanguage = (String) languageDropdown.getSelectedItem();
         boolean isSoundEnabled = soundToggle.isSelected();
 
         // Save settings to the config file
         configParser.setValue("CHESS_PIECE_SET", selectedPieceSet);
         configParser.setValue("CHESS_SOUND_ENABLED", String.valueOf(isSoundEnabled));
+        configParser.setValue("CHESS_LANGUAGE", selectedLanguage);
+
         try {
             configParser.save();
         } catch (IOException ex) {

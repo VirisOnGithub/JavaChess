@@ -189,12 +189,12 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(CheckEvent event) {
-        JOptionPane.showMessageDialog(this, "Check!");
+        JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.CHECK, null));
     }
 
     @Override
     public void visit(CheckMateEvent event) {
-        JOptionPane.showMessageDialog(this, "CheckMate! Player " + event.getWinnerColor() + " wins!");
+        JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.CHECKMATE, Map.of("player", event.getWinnerColor().toString())));
     }
 
     @Override
@@ -219,7 +219,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
                     new Bishop(color),
                     new Knight(color)
             }).map(piece -> pieceIcons.getOrDefault(piece, null)).toArray(ImageIcon[]::new);
-            int choice = JOptionPane.showOptionDialog(this, "Choose a piece to promote to:", "Promotion",
+            int choice = JOptionPane.showOptionDialog(this, game.languageService.getMessage(Message.PROMOTE, null), "Promotion",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
             Position piecePosition = event.getFrom();
             Cell pawnCell = game.getBoard().getCells().get(piecePosition);
@@ -246,7 +246,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(PatEvent event) {
-        JOptionPane.showMessageDialog(this, "Pat! This is a draw!");
+        JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.STALEMATE, null));
     }
 
     @Override
@@ -256,6 +256,8 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(SoundEvent event) {
-        AudioPlayer.playAudio(event.getSound());
+        if(game.configParser.getValue("CHESS_SOUND_ENABLED", "true").equals("true")){
+            AudioPlayer.playAudio(event.getSound());
+        }
     }
 }

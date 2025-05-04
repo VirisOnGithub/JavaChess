@@ -18,11 +18,14 @@ public class Game extends Observable {
     private final HashMap<String, Integer> history = new HashMap<>();
     private int fiftyMoveRuleCounter = 0;
     protected final ConfigParser configParser;
+    protected final LanguageService languageService;
 
     public Game(){
         this.configParser = new ConfigParser();
         board = new Board();
         players = new ArrayList<>();
+        languageService = new LanguageService();
+        languageService.setLanguage(configParser.getLanguage());
         Window window = new Window(this);
     }
 
