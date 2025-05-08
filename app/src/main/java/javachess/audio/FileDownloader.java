@@ -64,8 +64,8 @@ private static void downloadFile(String fileName) throws IOException, URISyntaxE
     URL fileURL = new URI(baseURL + fileNameWithExtension).toURL();
 
     // Téléchargement du fichier
-    try (ReadableByteChannel rbc = Channels.newChannel(fileURL.openStream());
-         FileOutputStream fos = new FileOutputStream(outputFile)) {
+    try (ReadableByteChannel rbc = Channels.newChannel(fileURL.openStream()); 
+     FileOutputStream fos = new FileOutputStream(outputFile)) {
         fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
     }
 }

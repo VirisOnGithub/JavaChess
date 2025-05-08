@@ -11,6 +11,20 @@ public class Position {
         this.y = y;
     }
 
+    public static Position fromString(String part) {
+        if (part.length() != 2) {
+            throw new IllegalArgumentException("Invalid position format");
+        }
+        char column = part.charAt(0);
+        char row = part.charAt(1);
+        int x = column - 'a';
+        int y = 8 - (row - '0');
+        if (x < 0 || x > 7 || y < 0 || y > 7) {
+            throw new IllegalArgumentException("Position out of bounds");
+        }
+        return new Position(x, y);
+    }
+
     public boolean equals(Position position) {
         return this.x == position.x && this.y == position.y;
     }

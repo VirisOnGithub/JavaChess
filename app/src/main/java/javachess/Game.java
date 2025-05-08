@@ -3,9 +3,11 @@ package javachess;
 import javachess.events.*;
 import javachess.pieces.Pawn;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Game extends Observable {
@@ -26,12 +28,24 @@ public class Game extends Observable {
         players = new ArrayList<>();
         languageService = new LanguageService();
         languageService.setLanguage(configParser.getLanguage());
-        Window window = new Window(this);
     }
 
     public static void main(String[] args) {
-        Game game = new Game();
-        game.playGame();
+        System.out.println("Choose display mode: 1 for console, 2 for GUI");
+        Scanner sc = new Scanner(System.in);
+        int choice = sc.nextInt();
+        if (choice == 1) {
+            Game game = new Game();
+            ConsoleChessDisplay consoleDisplay = new ConsoleChessDisplay(game);
+            game.playGame();
+        } else if (choice == 2) {
+            SwingUtilities.invokeLater(() -> {
+                new ChessGameMenu().setVisible(true);
+            });
+        } else {
+            System.out.println("Invalid choice. Exiting.");
+            return;
+        }
     }
 
     public Move getMove() {

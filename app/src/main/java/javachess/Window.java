@@ -27,7 +27,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
     public Window(Game game) {
         super("Java Chess");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("/classic/wK.png")));
+//        setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("classic/wK.png")));
         setPreferredSize(new Dimension(800, 800));
 
         for(PieceColor pieceColor : PieceColor.values()){

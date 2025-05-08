@@ -42,7 +42,11 @@ sourceSets {
 
 application {
     // Define the main class for the application.
-    mainClass = 'javachess.ChessGameMenu'
+    mainClass = 'javachess.Game'
+}
+
+run {
+    standardInput = System.in
 }
 
 tasks.named('test') {
@@ -50,8 +54,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+//tasks.named('console') {
+//    mainClass = 'javachess.ConsoleChessDisplay'
+//}
+
 processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
-
-

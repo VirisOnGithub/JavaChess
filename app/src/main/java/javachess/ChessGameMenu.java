@@ -98,6 +98,7 @@ private void onPlay(ActionEvent e) {
     new Thread(() -> {
         this.dispose();
         Game game = new Game();
+        new Window(game);
         game.playGame();
     }).start();
 }
