@@ -1,11 +1,14 @@
 package javachess;
 
+import javachess.parser.Parser;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class ChessGameMenu extends JFrame {
 
@@ -110,6 +113,18 @@ private void onPlay(ActionEvent e) {
         if (result == JFileChooser.APPROVE_OPTION) {
             String filePath = fileChooser.getSelectedFile().getAbsolutePath();
             JOptionPane.showMessageDialog(this, "Loading PGN from:\n" + filePath);
+            Parser parser = new Parser();
+            String gameTxt = parser.getGameFromPath(filePath);
+            parser.splitParts(gameTxt);
+
+            Board board = new Board();
+            ArrayList<Move> moves = board.getMovesFromInstructions(parser.getMoves());
+            Game game = new Game();
+            for (Move move : moves) {
+                game.setMove(move.getFrom(), move.getTo(), false);
+            }
+            new Window(game);
+            game.playGame();
         }
     }
 

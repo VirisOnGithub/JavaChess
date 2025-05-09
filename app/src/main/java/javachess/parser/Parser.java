@@ -25,16 +25,30 @@ public class Parser {
         put("P", PieceType.PAWN);
     }};
 
-    public static void main(String[] args) {
-        String path = args.length == 0 ? "dummy.pgn" : args[0];
-        String game = getGameFromPath(path);
-        splitParts(game);
+    public Parser() {
+        headers = new HashMap<>();
+        moves = new ArrayList<>();
     }
 
-    private static String getGameFromPath(String path) {
-        URL url = Parser.class.getResource('/' + path);
+    public HashMap<String, PieceType> getPieceMap() {
+        return pieceMap;
+    }
+
+    public ArrayList<Instruction> getMoves() {
+        return moves;
+    }
+
+    public static void main(String[] args) {
+        Parser parser = new Parser();
+        URL url = Parser.class.getResource(args.length == 0 ? "dummy.pgn" : args[0]);
         assert url != null;
-        File file = new File(url.getPath());
+        String path = url.getPath();
+        String game = parser.getGameFromPath(path);
+        parser.splitParts(game);
+    }
+
+    public String getGameFromPath(String path) {
+        File file = new File(path);
         StringBuilder game = new StringBuilder();
         try {
             Scanner scanner = new Scanner(file);
@@ -48,14 +62,14 @@ public class Parser {
         return game.toString();
     }
 
-    private static void splitParts(String game) {
+    public void splitParts(String game) {
         String[] parts = game.split("\n\n");
         assert parts.length == 2;
         headers = getHeaders(parts[0]);
         moves = getMoves(parts[1]);
     }
 
-    private static HashMap<String, String> getHeaders(String unparsedHeader) {
+    public HashMap<String, String> getHeaders(String unparsedHeader) {
         String[] headers = unparsedHeader.split("\n");
         HashMap<String, String> headerMap = new HashMap<>();
         for (String header : headers) {
@@ -73,8 +87,8 @@ public class Parser {
         return headerMap;
     }
 
-    private static ArrayList<Instruction> getMoves(String unparsedMoves) {
-        String[] moves = unparsedMoves.replaceAll("\\{.*?\\}", "") // Remove comments
+    public ArrayList<Instruction> getMoves(String unparsedMoves) {
+        String[] moves = unparsedMoves.replaceAll("\\{.*?}", "") // Remove comments
                                       .replaceAll("\\n", " ") // Remove new lines
                                       .split("[\\s.]+"); // Split by whitespace and dots (trimming it also)
         System.out.println(Arrays.toString(moves));
@@ -95,7 +109,7 @@ public class Parser {
         return instructions;
     }
 
-    private static Instruction parseMove(String move, PieceColor pieceColor) {
+    public Instruction parseMove(String move, PieceColor pieceColor) {
         PieceType pieceType = null;
         Position position;
         boolean isCapture = false;

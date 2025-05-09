@@ -30,6 +30,14 @@ public class Game extends Observable {
         languageService.setLanguage(configParser.getLanguage());
     }
 
+    public Game(Board board){
+        this.configParser = new ConfigParser();
+        this.board = board;
+        players = new ArrayList<>();
+        languageService = new LanguageService();
+        languageService.setLanguage(configParser.getLanguage());
+    }
+
     public static void main(String[] args) {
         System.out.println("Choose display mode: 1 for console, 2 for GUI");
         Scanner sc = new Scanner(System.in);

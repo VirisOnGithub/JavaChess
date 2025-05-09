@@ -1,6 +1,9 @@
 package javachess;
 
 import javachess.decorators.Directions;
+import javachess.parser.CastlingInstruction;
+import javachess.parser.Instruction;
+import javachess.parser.RegularInstruction;
 import javachess.pieces.*;
 
 import java.util.ArrayList;
@@ -202,5 +205,53 @@ public class Board {
             }
         }
         return pieceOrigins;
+    }
+
+    public Position findPieceByItsFinalPosition(RegularInstruction instruction) {
+        ArrayList<Position> pieceOrigins = new ArrayList<>();
+        Position to = instruction.getTo();
+        Cell toCell = cells.get(to);
+        for (Cell cell : cells.reverseKeySet()) {
+            Piece piece = cell.getPiece();
+            if(piece.getColor() == instruction.getPieceColor() && piece.getType() == instruction.getPieceType() && piece.getDecorator().getValidCells().contains(toCell)){
+                pieceOrigins.add(cells.getReverse(cell));
+            }
+        }
+        if(pieceOrigins.isEmpty()){
+           return null;
+        }
+        if(pieceOrigins.size() == 1){
+            return pieceOrigins.getFirst();
+        }
+        char ambiguity = instruction.getAmbiguity();
+        int fromX = ambiguity - 'a';
+        for(Position position : pieceOrigins){
+            if (position.getX() == fromX) {
+                return position;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Move> getMovesFromInstructions (ArrayList<Instruction> instructions) {
+        ArrayList<Move> moves = new ArrayList<>();
+        for (Instruction instruction : instructions) {
+            if(instruction instanceof CastlingInstruction ci) {
+                boolean isWhite = ci.getPieceColor() == PieceColor.WHITE;
+                int piecesY = isWhite ? 0 : 7;
+                Position kingPosition = new Position(4, piecesY);
+                Position rookPosition = new Position(ci.isLongCastling() ? 0 : 7, piecesY);
+                moves.add(new Move(kingPosition, rookPosition));
+            } else {
+                RegularInstruction ri = (RegularInstruction) instruction;
+                Position fromPos = findPieceByItsFinalPosition(ri);
+                if (fromPos != null) {
+                    moves.add(new Move(fromPos, ri.getTo()));
+                } else {
+                    System.err.println("Error: invalid regular instruction, " + ri);
+                }
+            }
+        }
+        return moves;
     }
 }
