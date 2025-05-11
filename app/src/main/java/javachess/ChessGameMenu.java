@@ -1,5 +1,6 @@
 package javachess;
 
+import javachess.parser.Instruction;
 import javachess.parser.Parser;
 
 import javax.swing.*;
@@ -117,14 +118,18 @@ private void onPlay(ActionEvent e) {
             String gameTxt = parser.getGameFromPath(filePath);
             parser.splitParts(gameTxt);
 
-            Board board = new Board();
-            ArrayList<Move> moves = board.getMovesFromInstructions(parser.getMoves());
-            Game game = new Game();
-            for (Move move : moves) {
-                game.setMove(move.getFrom(), move.getTo(), false);
-            }
-            new Window(game);
-            game.playGame();
+            new Thread(() -> {
+                this.dispose();
+                Board board = new Board();
+                Game game = new Game(board);
+                for (Instruction moveInstr : parser.getMoves()) {
+                    Move move = board.getMoveFromInstructions(moveInstr);
+                    game.setMove(move.getFrom(), move.getTo(), false);
+                    game.actualPlayer++;
+                }
+                new Window(game);
+                game.playGame();
+            }).start();
         }
     }
 

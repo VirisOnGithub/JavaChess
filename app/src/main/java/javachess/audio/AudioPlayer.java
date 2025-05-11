@@ -13,18 +13,18 @@ public class AudioPlayer {
                     InputStream audioStream = AudioPlayer.class.getClassLoader().getResourceAsStream(resourcePath);
 
                     if (audioStream != null) {
-                        System.out.println("Audio file found: " + resourcePath);
+//                        System.out.println("Audio file found: " + resourcePath);
                         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audioStream);
 
                         Clip clip = AudioSystem.getClip();
                         clip.open(audioInputStream);
-                        System.out.println("Playing audio: " + resourcePath);
+//                        System.out.println("Playing audio: " + resourcePath);
                         clip.start();
                         // Wait for the audio to finish playing
                         clip.drain();
                         clip.close();
                         audioInputStream.close();
-                        System.out.println("Audio playback finished.");
+//                        System.out.println("Audio playback finished.");
                     } else {
                         System.err.println("Audio file not found: " + resourcePath);
                     }

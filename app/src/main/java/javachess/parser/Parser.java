@@ -93,13 +93,14 @@ public class Parser {
                                       .split("[\\s.]+"); // Split by whitespace and dots (trimming it also)
         System.out.println(Arrays.toString(moves));
         ArrayList<Instruction> instructions = new ArrayList<>();
-        for (int i = 0; i < moves.length / 3; i+=3) {
-            String moveWhite = moves[i + 1];
-            String moveBlack = moves[i + 2];
-            String[] bothMoves = new String[]{moveWhite, moveBlack};
+        System.out.println("Length of moves: " + moves.length);
+        for (int i = 0; i < moves.length; i+=3) {
+            System.out.println("Turn number " + moves[i]);
+            String[] bothMoves = i + 2 >= moves.length ? new String[]{moves[i + 1]} : new String[]{moves[i + 1], moves[i + 2]};
             for(int j = 0; j < bothMoves.length; j++) {
                 String move = bothMoves[j];
                 if (move.equals("1-0") || move.equals("0-1") || move.equals("1/2-1/2")) {
+                    System.out.println("End of the game");
                     break; // End of the game
                 }
                 Instruction instruction = parseMove(move, j == 0 ? PieceColor.WHITE : PieceColor.BLACK);
@@ -157,15 +158,16 @@ public class Parser {
 //            System.out.println("Move after piece type check: " + move);
             // Check for ambiguity
             if (move.length() > 2) {
-                ambiguity = move.charAt(2);
-                move = move.substring(0, 2);
+                ambiguity = move.charAt(0);
+                move = move.substring(1);
             }
 //            System.out.println("Move after ambiguity check: " + move);
         }
         // Get the position
         int file = move.charAt(0) - 'a';
-        int rank = move.charAt(1) - '1';
+        int rank = 7 - (move.charAt(1) - '1');
         position = new Position(file, rank);
+//        System.out.println("Position: " + position);
         // Create the instruction
         RegularInstruction instruction = new RegularInstruction(pieceColor, pieceType, position, isCapture, isCheck, isCheckMate, ambiguity);
         if (promoteTo != null) {

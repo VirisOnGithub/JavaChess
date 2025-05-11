@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
 
+import static java.lang.System.exit;
+
 public class Board {
     private final BiMap<Position, Cell> cells;
     private Move lastMove;
@@ -154,7 +156,7 @@ public class Board {
     public void log() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                Piece piece = cells.get(new Position(i, j)).getPiece();
+                Piece piece = cells.get(new Position(j, i)).getPiece();
                 if(piece != null){
                     switch (piece.getType()){
                         case PAWN -> System.out.print("P ");
@@ -170,6 +172,7 @@ public class Board {
             }
             System.out.println();
         }
+        System.out.println("\n");
     }
 
     public String getIdString() {
@@ -213,7 +216,7 @@ public class Board {
         Cell toCell = cells.get(to);
         for (Cell cell : cells.reverseKeySet()) {
             Piece piece = cell.getPiece();
-            if(piece.getColor() == instruction.getPieceColor() && piece.getType() == instruction.getPieceType() && piece.getDecorator().getValidCells().contains(toCell)){
+            if(piece != null && piece.getColor() == instruction.getPieceColor() && piece.getType() == instruction.getPieceType() && piece.getDecorator().getValidCells().contains(toCell)) {
                 pieceOrigins.add(cells.getReverse(cell));
             }
         }
@@ -233,25 +236,23 @@ public class Board {
         return null;
     }
 
-    public ArrayList<Move> getMovesFromInstructions (ArrayList<Instruction> instructions) {
-        ArrayList<Move> moves = new ArrayList<>();
-        for (Instruction instruction : instructions) {
-            if(instruction instanceof CastlingInstruction ci) {
-                boolean isWhite = ci.getPieceColor() == PieceColor.WHITE;
-                int piecesY = isWhite ? 0 : 7;
-                Position kingPosition = new Position(4, piecesY);
-                Position rookPosition = new Position(ci.isLongCastling() ? 0 : 7, piecesY);
-                moves.add(new Move(kingPosition, rookPosition));
+    public Move getMoveFromInstructions (Instruction instruction) {
+        if(instruction instanceof CastlingInstruction ci) {
+            boolean isWhite = ci.getPieceColor() == PieceColor.WHITE;
+            int piecesY = isWhite ? 7 : 0;
+            Position kingPosition = new Position(4, piecesY);
+            Position rookPosition = new Position(ci.isLongCastling() ? 2 : 6, piecesY);
+            return new Move(kingPosition, rookPosition);
+        } else {
+            RegularInstruction ri = (RegularInstruction) instruction;
+            Position fromPos = findPieceByItsFinalPosition(ri);
+            if (fromPos != null) {
+                return new Move(fromPos, ri.getTo());
             } else {
-                RegularInstruction ri = (RegularInstruction) instruction;
-                Position fromPos = findPieceByItsFinalPosition(ri);
-                if (fromPos != null) {
-                    moves.add(new Move(fromPos, ri.getTo()));
-                } else {
-                    System.err.println("Error: invalid regular instruction, " + ri);
-                }
+                System.err.println("Error: invalid regular instruction, " + ri);
+                exit(0);
+                return null;
             }
         }
-        return moves;
     }
 }

@@ -15,7 +15,7 @@ public class Game extends Observable {
     protected Move move;
     private final Board board;
     private boolean gameDone = false;
-    private int actualPlayer = 0;
+    protected int actualPlayer = 0;
     public Piece promoteTo = null;
     private final HashMap<String, Integer> history = new HashMap<>();
     private int fiftyMoveRuleCounter = 0;
@@ -28,6 +28,7 @@ public class Game extends Observable {
         players = new ArrayList<>();
         languageService = new LanguageService();
         languageService.setLanguage(configParser.getLanguage());
+        addTwoPlayers();
     }
 
     public Game(Board board){
@@ -36,6 +37,7 @@ public class Game extends Observable {
         players = new ArrayList<>();
         languageService = new LanguageService();
         languageService.setLanguage(configParser.getLanguage());
+        addTwoPlayers();
     }
 
     public static void main(String[] args) {
@@ -64,6 +66,11 @@ public class Game extends Observable {
         return board;
     }
 
+    private void addTwoPlayers(){
+        players.add(new Player(this, PieceColor.WHITE));
+        players.add(new Player(this, PieceColor.BLACK));
+    }
+
     public Player getNextPlayer() {
         return players.get((actualPlayer + 1) % players.size());
     }
@@ -73,9 +80,6 @@ public class Game extends Observable {
     }
 
     public void playGame(){
-        players.add(new Player(this, PieceColor.WHITE));
-        players.add(new Player(this, PieceColor.BLACK));
-
         notifyAll(new SoundEvent("game-start"));
 
         while(!gameDone){
@@ -144,7 +148,7 @@ public class Game extends Observable {
         Piece pieceTo = toCell.getPiece();
         // should never happen with the current move system
         if (pieceFrom == null) {
-            System.err.println("Invalid move: No piece at the source position.");
+            System.err.println("Invalid move: No piece at the source position. Position1: " + from + " Position2: " + to);
             return false;
         }
 
@@ -156,12 +160,13 @@ public class Game extends Observable {
         }
 
         if (!board.getValidCellsForBoard(fromCell.getPiece()).contains(toCell) && !castling) {
-            System.out.println(String.valueOf(board.getValidCellsForBoard(fromCell.getPiece())
-                    .stream()
-                    .map(Object::hashCode)
-                    .collect(Collectors.toCollection(ArrayList::new))));
-            System.out.println("\n");
-            System.out.println(toCell.hashCode());
+//            System.out.println(String.valueOf(board.getValidCellsForBoard(fromCell.getPiece())
+//                    .stream()
+//                    .map((e) -> board.getCells().getReverse(e))
+//                    .collect(Collectors.toCollection(ArrayList::new))));
+//            System.out.println("\n");
+//            System.out.println(board.getCells().getReverse(toCell));
+//            System.out.println("from: " + board.getCells().getReverse(fromCell));
             System.err.println("Invalid move: The destination cell is not valid for the selected piece.");
             notifyAll(new SoundEvent("illegal"));
             soundPlayed = true;
