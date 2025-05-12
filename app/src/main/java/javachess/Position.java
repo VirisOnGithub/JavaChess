@@ -87,4 +87,12 @@ public class Position {
                 ", y=" + y +
                 '}';
     }
+
+    /**
+     * Converts the position to a string representation in PGN format.
+     * @return the PGN representation of the position (e.g., "a1", "h8")
+     */
+    public String asPGN() {
+        return String.valueOf((char) ('a' + x)) + (8 - y);
+    }
 }

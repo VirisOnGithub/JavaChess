@@ -117,4 +117,16 @@ public abstract class Piece {
     public void setCell(Cell cell) {
         this.cell = cell;
     }
+
+    public char getFEN() {
+        char fen = switch (getType()) {
+            case PAWN -> 'P';
+            case ROOK -> 'R';
+            case KNIGHT -> 'N';
+            case BISHOP -> 'B';
+            case QUEEN -> 'Q';
+            case KING -> 'K';
+        };
+        return color == PieceColor.WHITE ? fen : Character.toLowerCase(fen);
+    }
 }

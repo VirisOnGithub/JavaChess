@@ -6,9 +6,8 @@ import javachess.parser.Instruction;
 import javachess.parser.RegularInstruction;
 import javachess.pieces.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import static java.lang.System.exit;
 
@@ -20,6 +19,8 @@ import static java.lang.System.exit;
 public class Board {
     private final BiMap<Position, Cell> cells;
     private Move lastMove;
+    private boolean isEnPassantPossible;
+    private int moveCounter = 1;
 
     public Board() {
         cells = new BiMap<>();
@@ -81,6 +82,10 @@ public class Board {
             toCell.setPiece(piece);
             piece.setMoved();
             lastMove = move;
+            isEnPassantPossible = Math.abs(move.to().getY() - move.from().getY()) == 2 && piece.getType() == PieceType.PAWN;
+            if(piece.getColor() == PieceColor.BLACK){
+                moveCounter++;
+            }
         } else {
             System.err.println("Invalid move");
         }
@@ -312,5 +317,70 @@ public class Board {
                 return null;
             }
         }
+    }
+
+    /**
+     * Converts the current state of the board to a FEN string.
+     * see <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">here</a>
+     *
+     * @param fiftyMoveRuleCounter the counter for the fifty-move rule
+     * @param color                the color of the player to move
+     * @return the FEN string representing the current state of the board
+     */
+    public String getFEN(int fiftyMoveRuleCounter, PieceColor color) {
+        StringBuilder fen = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            int emptyCount = 0;
+            for (int j = 0; j < 8; j++) {
+                Cell cell = cells.get(new Position(j, i));
+                Piece piece = cell.getPiece();
+                if (piece != null) {
+                    if (emptyCount > 0) {
+                        fen.append(emptyCount);
+                        emptyCount = 0;
+                    }
+                    fen.append(piece.getFEN());
+                } else {
+                    emptyCount++;
+                }
+            }
+            if (emptyCount > 0) {
+                fen.append(emptyCount);
+            }
+            if (i < 7) {
+                fen.append("/");
+            }
+        }
+        fen.append(" ").append(color == PieceColor.BLACK ? "w" : "b"); // active colour is not the one that just played
+        fen.append(" ").append(getCastlingRights());
+        fen.append(" ").append(isEnPassantPossible ? lastMove.getMiddlePosition().asPGN() : "-");
+        fen.append(" ").append(fiftyMoveRuleCounter);
+        fen.append(" ").append(moveCounter);
+        return fen.toString();
+    }
+
+    /**
+     * Gets the current state of castling possibilities on the board.
+     * @return a string representing the castling rights
+     */
+    private String getCastlingRights() {
+        StringBuilder castlingRights = new StringBuilder();
+        // LinkedHashMap keeps the order of insertion (see https://stackoverflow.com/questions/663374/java-ordered-map)
+        Map<Position, String> castlingMap = new LinkedHashMap<>(){
+            {
+                put(new Position(7, 7), "K");
+                put(new Position(0, 7), "Q");
+                put(new Position(7, 0), "k");
+                put(new Position(0, 0), "q");
+            }
+        };
+        for (Position position : castlingMap.keySet()) {
+            Cell cell = cells.get(position);
+            Piece piece = cell.getPiece();
+            if (piece != null && piece.getType() == PieceType.ROOK && !piece.hasMoved()) {
+                castlingRights.append(castlingMap.get(position));
+            }
+        }
+        return castlingRights.toString();
     }
 }

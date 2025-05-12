@@ -221,11 +221,13 @@ public class Game extends Observable {
         board.applyMove(move, castling);
 
         // check if there has been a pawn move or a capture
-        if (pieceFrom.getType() == PieceType.PAWN && pieceTo != null) {
+        if (pieceFrom.getType() != PieceType.PAWN && pieceTo == null) {
             incrementFiftyMoveRuleCounter();
         } else {
             resetFiftyMoveRuleCounter();
         }
+
+        System.out.println("FEN :" + getFEN());
 
         // handle castling
         if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getX() - to.getX()) > 1) {
@@ -243,6 +245,7 @@ public class Game extends Observable {
         boolean enPassant = false;
 
         // handle en passant
+
         if (pieceFrom.getType() == PieceType.PAWN && Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 1) {
             enPassant = true;
 
@@ -307,5 +310,12 @@ public class Game extends Observable {
      */
     public Player getCurrentPlayer() {
         return players.get(actualPlayer % players.size());
+    }
+
+    /**
+     * Get the FEN string of the current board state.
+     */
+    public String getFEN() {
+        return board.getFEN(fiftyMoveRuleCounter, getCurrentPlayer().getColor());
     }
 }
