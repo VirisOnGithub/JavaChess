@@ -24,10 +24,10 @@ public class MoveInitializer {
     }
 
     private Move createMove(Instruction instruction) {
-        if(instruction instanceof CastlingInstruction castInstruction){
-            int side = castInstruction.getPieceColor() == PieceColor.WHITE ? 0 : 7;
+        if(instruction instanceof CastlingInstruction(boolean isLongCastling, PieceColor pieceColor)){
+            int side = pieceColor == PieceColor.WHITE ? 0 : 7;
             Position kingPos = new Position(side, 4);
-            Position rookPos = new Position(side, castInstruction.isLongCastling() ? 0 : 7);
+            Position rookPos = new Position(side, isLongCastling ? 0 : 7);
             return new Move(kingPos, rookPos);
         }
         RegularInstruction regularInstruction = (RegularInstruction) instruction;

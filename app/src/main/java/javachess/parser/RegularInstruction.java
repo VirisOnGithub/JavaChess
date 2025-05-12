@@ -35,10 +35,6 @@ public class RegularInstruction implements Instruction {
         return to;
     }
 
-    public boolean isCapture() {
-        return isCapture;
-    }
-
     public boolean isCheck() {
         return isCheck;
     }

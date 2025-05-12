@@ -13,6 +13,10 @@ public class RookDecorator extends PieceDecorator {
         this.board = board;
     }
 
+    /**
+     * Get the valid cells for the rook.
+     * @return An ArrayList of valid cells for the rook.
+     */
     @Override
     public ArrayList<Cell> getValidCells() {
         Directions[] directions = {Directions.TOP, Directions.BOTTOM, Directions.LEFT, Directions.RIGHT};

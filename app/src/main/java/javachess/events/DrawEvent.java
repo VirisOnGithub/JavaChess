@@ -3,6 +3,10 @@ package javachess.events;
 import javachess.Event;
 import javachess.EventVisitor;
 
+/**
+ * Event that indicates a draw situation in the game.
+ * This can be due to insufficient material, or threefold repetition.
+ */
 public class DrawEvent extends Event {
     String reason;
 

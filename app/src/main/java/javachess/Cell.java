@@ -1,5 +1,9 @@
 package javachess;
 
+/**
+ * Class representing a cell on the chessboard.
+ * It can either be empty or contain a piece.
+ */
 public class Cell {
     private Piece piece;
     private final Board board;

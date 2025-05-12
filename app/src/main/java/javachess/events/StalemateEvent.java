@@ -2,7 +2,11 @@ package javachess.events;
 
 import javachess.*;
 
-public class PatEvent extends Event {
+/**
+ * Event that indicates a stalemate situation in the game.
+ * This event is triggered when a player has no legal moves and is not in check.
+ */
+public class StalemateEvent extends Event {
 
     @Override
     public String toString() {

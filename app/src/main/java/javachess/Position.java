@@ -2,6 +2,11 @@ package javachess;
 
 import javachess.decorators.Directions;
 
+/**
+ * Class representing a position on the chessboard.
+ * The position is represented by x and y coordinates.
+ * The coordinate (0, 0) corresponds to the top-left corner of the board.
+ */
 public class Position {
     private int x;
     private int y;
@@ -11,6 +16,11 @@ public class Position {
         this.y = y;
     }
 
+    /**
+     * Converts a string representation of a position to a Position object.
+     * @param part the string representation of the position (e.g., "a1", "h8")
+     * @return a Position object
+     */
     public static Position fromString(String part) {
         if (part.length() != 2) {
             throw new IllegalArgumentException("Invalid position format");

@@ -2,6 +2,10 @@ package javachess.events;
 
 import javachess.*;
 
+/**
+ * Event that indicates a promotion of a pawn to a different piece.
+ * This event is triggered when a pawn reaches the opposite side of the board.
+ */
 public class PromotionEvent extends Event {
     Position from;
 

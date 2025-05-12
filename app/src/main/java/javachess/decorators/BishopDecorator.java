@@ -13,6 +13,11 @@ public class BishopDecorator extends PieceDecorator{
         this.board = board;
     }
 
+
+    /**
+     * Get the valid cells for the bishop.
+     * @return An ArrayList of valid cells for the bishop.
+     */
     @Override
     public ArrayList<Cell> getValidCells() {
         Directions[] directions = {

@@ -14,6 +14,10 @@ public class EnPassantDecorator extends PieceDecorator {
         this.pieceDecorator = pieceDecorator;
     }
 
+    /**
+     * Get the valid cells for the en passant move (pawn).
+     * @return An ArrayList of valid cells for the en passant move.
+     */
     @Override
     public ArrayList<Cell> getValidCells() {
         ArrayList<Cell> validCells = pieceDecorator == null ? new ArrayList<>() : pieceDecorator.getValidCells();
@@ -21,10 +25,10 @@ public class EnPassantDecorator extends PieceDecorator {
         Position piecePosition = cells.getReverse(this.piece.getCell());
 
         Move lastMove = this.board.getLastMove();
-        if(lastMove != null && cells.get(lastMove.getTo()).getPiece() instanceof Pawn){
-            int lastMoveFromX = lastMove.getFrom().getY();
-            int lastMoveToY = lastMove.getTo().getY();
-            int lastMoveToX = lastMove.getTo().getX();
+        if(lastMove != null && cells.get(lastMove.to()).getPiece() instanceof Pawn){
+            int lastMoveFromX = lastMove.from().getY();
+            int lastMoveToY = lastMove.to().getY();
+            int lastMoveToX = lastMove.to().getX();
 
             if(Math.abs(lastMoveFromX - lastMoveToY) == 2){
                 if(lastMoveToY == piecePosition.getY() && Math.abs(lastMoveToX - piecePosition.getX()) == 1){

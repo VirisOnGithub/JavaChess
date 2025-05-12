@@ -11,6 +11,10 @@ public abstract class PieceDecorator {
     protected Board board;
     protected Piece piece;
 
+    /**
+     * Get the valid cells for the piece. Only works for infinite range pieces.
+     * @return An ArrayList of valid cells for the piece.
+     */
     ArrayList<Cell> getDirectedCells(Directions[] directions, PieceDecorator currentDecorator) {
         ArrayList<Cell> validCells = new ArrayList<>();
         BiMap<Position, Cell> cells = currentDecorator.board.getCells();
@@ -32,6 +36,13 @@ public abstract class PieceDecorator {
         return validCells;
     }
 
+    /**
+     * Check if the next cell is valid and add it to the list of valid cells.
+     * @param cell The current cell.
+     * @param nextCellPos The position of the cell we want to check.
+     * @param cells The map of cells.
+     * @param validCells The list of valid cells.
+     */
     protected void checkValidCell(Cell cell, Position nextCellPos, BiMap<Position, Cell> cells, ArrayList<Cell> validCells) {
         if (cells.contains(nextCellPos)) {
             Cell nextCell = cells.get(nextCellPos);

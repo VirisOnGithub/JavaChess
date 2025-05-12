@@ -12,6 +12,11 @@ public class KingDecorator extends PieceDecorator {
         this.board = board;
     }
 
+
+    /**
+     * Get the valid cells for the king.
+     * @return An ArrayList of valid cells for the king.
+     */
     @Override
     public ArrayList<Cell> getValidCells() {
         Directions[] directions = {

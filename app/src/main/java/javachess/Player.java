@@ -1,9 +1,12 @@
 package javachess;
 
+/**
+ * Class representing a player in the chess game.
+ * Each player has a color and can make moves.
+ */
 public class Player {
     final Game game;
     private final PieceColor color;
-    private Move move;
 
     public Player(Game game, PieceColor color) {
         this.game = game;
@@ -26,8 +29,7 @@ public class Player {
     }
 
     public void setMove(Position from, Position to) {
-        this.move = new Move(from, to);
-        game.move = move;
+        game.move = new Move(from, to);
         synchronized (game){
             game.notify();
         }

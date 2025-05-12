@@ -4,6 +4,9 @@ import javachess.Event;
 import javachess.EventVisitor;
 import javachess.PieceColor;
 
+/**
+ * Event that indicates a checkmate situation in the game.
+ */
 public class CheckMateEvent extends Event {
     private final PieceColor winnerColor;
 

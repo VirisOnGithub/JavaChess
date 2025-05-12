@@ -9,8 +9,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
+/**
+ * Main menu for the chess GUI game.
+ * This class creates a JFrame that serves as the main menu for the chess game.
+ * It includes buttons to start a new game, load a game from a PGN file, and access settings.
+ */
 public class ChessGameMenu extends JFrame {
 
     public ChessGameMenu() {
@@ -69,6 +73,12 @@ public class ChessGameMenu extends JFrame {
         add(mainPanel);
     }
 
+    /**
+     * Custom button for the menu
+     * @param text The text to display on the button
+     * @param action The action to perform when the button is clicked
+     * @return A JButton with custom styling
+     */
     private JButton createStyledButton(String text, AbstractAction action) {
         JButton button = new JButton(text);
         button.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -97,34 +107,46 @@ public class ChessGameMenu extends JFrame {
         return button;
     }
 
-private void onPlay(ActionEvent e) {
-    // Avoid blocking the current thread, (while loop)
-    new Thread(() -> {
-        this.dispose();
-        Game game = new Game();
-        new Window(game);
-        game.playGame();
-    }).start();
-}
+    /**
+     * Action performed when the "Play" button is clicked.
+     * This method starts a new game and disposes of the menu window.
+     *
+     * @param e The action event triggered by the button click
+     */
+    private void onPlay(ActionEvent e) {
+        // Avoid blocking the current thread, (while loop)
+        new Thread(() -> {
+            this.dispose();
+            Game game = new Game();
+            new Window(game);
+            game.playGame();
+        }).start();
+    }
 
+    /**
+     * Action performed when the "Load PGN" button is clicked.
+     * This method opens a file chooser dialog to select a PGN file and loads the game from it.
+     *
+     * @param e The action event triggered by the button click
+     */
     private void onLoadPGN(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Open PGN File");
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-            JOptionPane.showMessageDialog(this, "Loading PGN from:\n" + filePath);
             Parser parser = new Parser();
             String gameTxt = parser.getGameFromPath(filePath);
             parser.splitParts(gameTxt);
 
+            // Avoid blocking the current thread, (while loop)
             new Thread(() -> {
                 this.dispose();
                 Board board = new Board();
                 Game game = new Game(board);
                 for (Instruction moveInstr : parser.getMoves()) {
                     Move move = board.getMoveFromInstructions(moveInstr);
-                    game.setMove(move.getFrom(), move.getTo(), false);
+                    game.setMove(move.from(), move.to(), false);
                     game.actualPlayer++;
                 }
                 new Window(game);
@@ -133,6 +155,12 @@ private void onPlay(ActionEvent e) {
         }
     }
 
+    /**
+     * Action performed when the "Settings" button is clicked.
+     * This method opens the settings panel.
+     *
+     * @param e The action event triggered by the button click
+     */
     private void onSettings(ActionEvent e) {
         SettingsPanel settingsPanel = new SettingsPanel(this);
         settingsPanel.setVisible(true);

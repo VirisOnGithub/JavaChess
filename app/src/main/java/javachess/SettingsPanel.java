@@ -7,14 +7,17 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 
+/**
+ * SettingsPanel class that provides a GUI for configuring game settings.
+ * This class allows users to select the piece set, language, and sound settings.
+ */
 public class SettingsPanel extends JDialog {
 
     private JComboBox<String> pieceSetDropdown;
     private JComboBox<String> languageDropdown;
     private JCheckBox soundToggle;
-    private ConfigParser configParser;
+    private final ConfigParser configParser;
 
     public SettingsPanel(JFrame parent) {
         // Initialize the dialog

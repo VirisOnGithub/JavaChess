@@ -12,18 +12,19 @@ import java.util.TreeSet;
 
 import static java.lang.System.exit;
 
+/**
+ * Class representing a chess board.
+ * The board is an 8x8 grid of cells, each of which can contain a piece.
+ * The board keeps track of the last move made and provides methods to manipulate the pieces on the board.
+ */
 public class Board {
     private final BiMap<Position, Cell> cells;
     private Move lastMove;
 
-    public Board(int size) {
+    public Board() {
         cells = new BiMap<>();
         setInitialPieces();
         lastMove = null;
-    }
-
-    public Board(){
-        this(8);
     }
 
     public BiMap<Position, Cell> getCells() {
@@ -34,6 +35,10 @@ public class Board {
         return lastMove;
     }
 
+    /**
+     * Sets the initial pieces on the board.
+     * The pieces are placed in their starting positions according to the rules of chess.
+     */
     public void setInitialPieces(){
         for(int i = 0; i < 8; i++){
             for(int j = 0; j < 8; j++){
@@ -61,21 +66,32 @@ public class Board {
         }
     }
 
+    /**
+     * Applies a move to the board.
+     *
+     * @param move the move to be applied
+     * @param roque whether the move is a castling move
+     */
     void applyMove(Move move, boolean roque){
-        Cell fromCell = cells.get(move.getFrom());
-        Cell toCell = cells.get(move.getTo());
+        Cell fromCell = cells.get(move.from());
+        Cell toCell = cells.get(move.to());
         if(getValidCellsForBoard(fromCell.getPiece()).contains(toCell) || roque){
             Piece piece = fromCell.getPiece();
             fromCell.setPiece(null);
             toCell.setPiece(piece);
             piece.setMoved();
             lastMove = move;
-//            System.out.println(getIdString());
         } else {
             System.err.println("Invalid move");
         }
     }
 
+    /**
+     * Checks if the king of the given color is in check.
+     *
+     * @param color the color of the king to check
+     * @return true if the king is in check, false otherwise
+     */
     boolean isCheck(PieceColor color){
         // find the king
         for (Cell cell : cells.reverseKeySet()) {
@@ -96,10 +112,16 @@ public class Board {
         return false; // King not found (should not happen)
     }
 
+    /**
+     * Checks if the king of the given color is in checkmate.
+     * it simulates all the possible moves of the pieces of the given color
+     *
+     * @param color the color of the king to check
+     * @return true if the king is in checkmate, false otherwise
+     */
     public boolean cannotMoveWithoutMate(PieceColor color) {
         for (Cell from : cells.reverseKeySet()) {
             Piece piece = from.getPiece();
-            Position fromPos = cells.getReverse(from);
             if (piece != null && piece.getColor() == color) {
                 ArrayList<Cell> destinations = piece.getDecorator().getValidCells();
 
@@ -124,6 +146,11 @@ public class Board {
         return true;
     }
 
+    /**
+     * Gets all the possible cells for a piece to move to, (excluding the cells that would put the king in check).
+     * @param piece the piece to check
+     * @return a list of valid cells for the piece to move to
+     */
     ArrayList<Cell> getValidCellsForBoard(Piece piece) {
         PieceColor color = piece.getColor();
         Cell from = piece.getCell();
@@ -146,6 +173,14 @@ public class Board {
         return validCells;
     }
 
+    /**
+     * Gets the next cell in the given direction from the current cell.
+     * Useful for decorators
+     *
+     * @param currentCell the current cell
+     * @param direction   the direction to move in
+     * @return the next cell in the given direction
+     */
     public Cell getNextCell(Cell currentCell, Directions direction){
         Position currentPosition = cells.getReverse(currentCell);
         Position nextPosition = new Position(currentPosition.getX() + direction.dx, currentPosition.getY() + direction.dy);
@@ -153,28 +188,35 @@ public class Board {
     }
 
 
-    public void log() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Piece piece = cells.get(new Position(j, i)).getPiece();
-                if(piece != null){
-                    switch (piece.getType()){
-                        case PAWN -> System.out.print("P ");
-                        case ROOK -> System.out.print("R ");
-                        case KNIGHT -> System.out.print("N ");
-                        case BISHOP -> System.out.print("B ");
-                        case QUEEN -> System.out.print("Q ");
-                        case KING -> System.out.print("K ");
-                    }
-                } else {
-                    System.out.print("X ");
-                }
-            }
-            System.out.println();
-        }
-        System.out.println("\n");
-    }
+//    public void log() {
+//        for (int i = 0; i < 8; i++) {
+//            for (int j = 0; j < 8; j++) {
+//                Piece piece = cells.get(new Position(j, i)).getPiece();
+//                if(piece != null){
+//                    switch (piece.getType()){
+//                        case PAWN -> System.out.print("P ");
+//                        case ROOK -> System.out.print("R ");
+//                        case KNIGHT -> System.out.print("N ");
+//                        case BISHOP -> System.out.print("B ");
+//                        case QUEEN -> System.out.print("Q ");
+//                        case KING -> System.out.print("K ");
+//                    }
+//                } else {
+//                    System.out.print("X ");
+//                }
+//            }
+//            System.out.println();
+//        }
+//        System.out.println("\n");
+//    }
 
+    /**
+     * Gets the ID string of the board.
+     * The ID string is a unique representation of the board state.
+     * It is used by the threefold repetition rule to check if the same position has occurred before.
+     *
+     * @return the ID string of the board
+     */
     public String getIdString() {
         HashSet<Position> cellsSet = new HashSet<>(cells.keySet());
         // SOrt the cell to always have the same order
@@ -199,6 +241,15 @@ public class Board {
         return idString.toString();
     }
 
+    /**
+     * Gets the origin positions of pieces that can move to the given position.
+     * This is used to parse moves from PGN files.
+     *
+     * @param to        the target position
+     * @param pieceColor the color of the piece
+     * @param pieceType  the type of the piece
+     * @return a list of positions from which a piece can move to the target position
+     */
     public ArrayList<Position> getPieceOriginFromMove(Position to, PieceColor pieceColor, PieceType pieceType) {
         ArrayList<Position> pieceOrigins = new ArrayList<>();
         Cell toCell = cells.get(to);
@@ -236,12 +287,19 @@ public class Board {
         return null;
     }
 
+    /**
+     * Converts an instruction to a move.
+     * This is used to parse moves from PGN files.
+     *
+     * @param instruction the instruction to convert
+     * @return the move corresponding to the instruction
+     */
     public Move getMoveFromInstructions (Instruction instruction) {
-        if(instruction instanceof CastlingInstruction ci) {
-            boolean isWhite = ci.getPieceColor() == PieceColor.WHITE;
+        if(instruction instanceof CastlingInstruction(boolean isLongCastling, PieceColor pieceColor)) {
+            boolean isWhite = pieceColor == PieceColor.WHITE;
             int piecesY = isWhite ? 7 : 0;
             Position kingPosition = new Position(4, piecesY);
-            Position rookPosition = new Position(ci.isLongCastling() ? 2 : 6, piecesY);
+            Position rookPosition = new Position(isLongCastling ? 2 : 6, piecesY);
             return new Move(kingPosition, rookPosition);
         } else {
             RegularInstruction ri = (RegularInstruction) instruction;

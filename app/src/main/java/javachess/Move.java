@@ -1,22 +1,16 @@
 package javachess;
 
-public class Move {
-    private Position from;
-    private Position to;
+/**
+ * Class representing a move in the chess game.
+ * @param from the starting position of the move
+ * @param to the ending position of the move
+ */
+public record Move(Position from, Position to) {
 
-    public Move(Position from, Position to) {
-        this.from = from;
-        this.to = to;
-    }
-
-    public Position getFrom() {
-        return from;
-    }
-
-    public Position getTo() {
-        return to;
-    }
-
+    /**
+     * Gets the mean position of a move (used to quickly detect if a pawn just moved two squares).
+     * @return
+     */
     public Position getMiddlePosition() {
         return new Position((from.getX() + to.getX()) / 2, (from.getY() + to.getY()) / 2);
     }

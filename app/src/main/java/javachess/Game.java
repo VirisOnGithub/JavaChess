@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
+/**
+ * Class that represents a chess game.
+ * It contains the players, the board, and the game logic.
+ */
 public class Game extends Observable {
     private final ArrayList<Player> players;
     protected Move move;
@@ -22,6 +25,10 @@ public class Game extends Observable {
     protected final ConfigParser configParser;
     protected final LanguageService languageService;
 
+    /**
+     * Constructor for the Game class.
+     * Initializes the board, players, and language service.
+     */
     public Game(){
         this.configParser = new ConfigParser();
         board = new Board();
@@ -31,6 +38,10 @@ public class Game extends Observable {
         addTwoPlayers();
     }
 
+    /**
+     * Constructor for the Game class.
+     * @param board The board to be used in the game.
+     */
     public Game(Board board){
         this.configParser = new ConfigParser();
         this.board = board;
@@ -66,19 +77,33 @@ public class Game extends Observable {
         return board;
     }
 
+    /**
+     * Shortcut method to add two players to the game.
+     */
     private void addTwoPlayers(){
         players.add(new Player(this, PieceColor.WHITE));
         players.add(new Player(this, PieceColor.BLACK));
     }
 
+    /**
+     * Get the next player without changing the actual player.
+     * @return The next player.
+     */
     public Player getNextPlayer() {
         return players.get((actualPlayer + 1) % players.size());
     }
 
+    /**
+     * Get the previous player without changing the actual player.
+     * @return The previous player.
+     */
     public Player getPreviousPlayer() {
         return players.get((actualPlayer - 1) % players.size());
     }
 
+    /**
+     * Main method to play the game.
+     */
     public void playGame(){
         notifyAll(new SoundEvent("game-start"));
 
@@ -86,9 +111,11 @@ public class Game extends Observable {
             Player currentPlayer = getCurrentPlayer();
             PieceColor playerColor = currentPlayer.getColor();
             notifyAll(new ChangePlayerEvent(playerColor));
+
+            // first check if there check or checkmate
             if (board.cannotMoveWithoutMate(playerColor)) {
                 notifyAll(new SoundEvent("game-end"));
-                notifyAll(board.isCheck(playerColor) ? new CheckMateEvent(getPreviousPlayer().getColor()) : new PatEvent());
+                notifyAll(board.isCheck(playerColor) ? new CheckMateEvent(getPreviousPlayer().getColor()) : new StalemateEvent());
                 gameDone = true;
                 break;
             }
@@ -103,6 +130,8 @@ public class Game extends Observable {
                 gameDone = true;
                 break;
             }
+
+            // handle fifty move rule (https://en.wikipedia.org/wiki/Fifty-move_rule)
             if (fiftyMoveRuleCounter >= 50) {
                 notifyAll(new SoundEvent("game-end"));
                 notifyAll(new DrawEvent("The game is a draw due to the fifty-move rule."));
@@ -112,12 +141,16 @@ public class Game extends Observable {
             boolean successMove;
             do {
                 Move move = currentPlayer.getMove();
-                successMove = setMove(move.getFrom(), move.getTo(), false);
+                successMove = setMove(move.from(), move.to(), false);
             } while (!successMove);
             actualPlayer++;
         }
     }
 
+    /**
+     * Get the number of times the current position has been played.
+     * @return The number of times the current position has been played.
+     */
     private int getPositionHistoryNumber() {
         return history.compute(board.getIdString(), (key, value) -> value == null ? 1 : value + 1);
     }
@@ -130,15 +163,18 @@ public class Game extends Observable {
         fiftyMoveRuleCounter = 0;
     }
 
-    public int getFiftyMoveRuleCounter() {
-        return fiftyMoveRuleCounter;
-    }
-
     private void notifyAll(Event event){
         setChanged();
         notifyObservers(event);
     }
 
+    /**
+     * Set the move for the game.
+     * @param from The position from which the piece is moved.
+     * @param to The position to which the piece is moved.
+     * @param castling True if the move is a castling move, false otherwise. It is false by default.
+     * @return True if the move is valid, false otherwise.
+     */
     public boolean setMove(Position from, Position to, boolean castling) {
         boolean soundPlayed = false;
         move = new Move(from, to);
@@ -146,6 +182,7 @@ public class Game extends Observable {
         Cell toCell = board.getCells().get(to);
         Piece pieceFrom = fromCell.getPiece();
         Piece pieceTo = toCell.getPiece();
+
         // should never happen with the current move system
         if (pieceFrom == null) {
             System.err.println("Invalid move: No piece at the source position. Position1: " + from + " Position2: " + to);
@@ -159,6 +196,7 @@ public class Game extends Observable {
             return false;
         }
 
+        // check if the move is valid for the piece (check if the decorator is valid)
         if (!board.getValidCellsForBoard(fromCell.getPiece()).contains(toCell) && !castling) {
 //            System.out.println(String.valueOf(board.getValidCellsForBoard(fromCell.getPiece())
 //                    .stream()
@@ -169,24 +207,26 @@ public class Game extends Observable {
 //            System.out.println("from: " + board.getCells().getReverse(fromCell));
             System.err.println("Invalid move: The destination cell is not valid for the selected piece.");
             notifyAll(new SoundEvent("illegal"));
-            soundPlayed = true;
             return false;
         }
 
-        if (pieceTo != null) {
-            if(pieceFrom.getColor() == pieceTo.getColor()){
-                System.err.println("Invalid move: The destination cell contains a piece of the same color.");
-                notifyAll(new SoundEvent("illegal"));
-                return false;
-            }
+        // check if the colors of the pieces are the same (a piece cannot take pieces of the same color)
+        if (pieceTo != null && pieceFrom.getColor() == pieceTo.getColor()){
+            System.err.println("Invalid move: The destination cell contains a piece of the same color.");
+            notifyAll(new SoundEvent("illegal"));
+            return false;
         }
+
         Move lastMove = board.getLastMove();
         board.applyMove(move, castling);
-        if(pieceFrom.getType() == PieceType.PAWN && pieceTo != null){
+
+        // check if there has been a pawn move or a capture
+        if (pieceFrom.getType() == PieceType.PAWN && pieceTo != null) {
             incrementFiftyMoveRuleCounter();
         } else {
             resetFiftyMoveRuleCounter();
         }
+
         // handle castling
         if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getX() - to.getX()) > 1) {
             System.out.println("Castling");
@@ -238,6 +278,11 @@ public class Game extends Observable {
             promoteTo.setCell(pawnCell);
         }
 
+        /*
+            * now we check which sound to play
+            * this order is based on the chess.com order
+         */
+
         if(!soundPlayed && board.isCheck(getNextPlayer().getColor())){
             notifyAll(new SoundEvent("move-check"));
             soundPlayed = true;
@@ -256,6 +301,10 @@ public class Game extends Observable {
         return true;
     }
 
+    /**
+     * Get the current player.
+     * @return The current player.
+     */
     public Player getCurrentPlayer() {
         return players.get(actualPlayer % players.size());
     }

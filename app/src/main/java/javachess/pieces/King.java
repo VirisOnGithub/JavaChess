@@ -8,6 +8,9 @@ import javachess.PieceType;
 import javachess.decorators.KingDecorator;
 import javachess.decorators.CastlingDecorator;
 
+/**
+ * Class that represents a king piece in the chess game.
+ */
 public class King extends Piece {
     public King(PieceColor color, Cell cell) {
         super(color, cell);

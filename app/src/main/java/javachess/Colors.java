@@ -1,5 +1,8 @@
 package javachess;
 
+/**
+ * Class that contains ANSI escape codes for coloring text in the console.
+ */
 public class Colors {
     public static final String RESET = "\u001B[0m";
 

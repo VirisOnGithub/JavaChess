@@ -15,6 +15,11 @@ import javachess.pieces.*;
 
 import static java.lang.Math.min;
 
+
+/**
+ * Class representing the main window of the chess game.
+ * This class is responsible for displaying the chessboard, pieces, and handling user interactions.
+ */
 public class Window extends JFrame implements Observer, EventVisitor {
 
     CaseLabel[][] tabJL;
@@ -27,9 +32,10 @@ public class Window extends JFrame implements Observer, EventVisitor {
     public Window(Game game) {
         super("Java Chess");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("classic/wK.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("/classic/wK.png")));
         setPreferredSize(new Dimension(800, 800));
 
+        // Fills the pieceIcons map with the pieces and their corresponding icons
         for(PieceColor pieceColor : PieceColor.values()){
             for(PieceType type: PieceType.values()) {
                 Piece piece = createPiece(type, pieceColor);
@@ -97,6 +103,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
             }
         }
 
+        // Set the labels for the columns and rows
         for(int i = 0; i < 8; i++){
             tabJL[i][7].setLowerRightCornerLabel(String.valueOf((char) ('a' + i)));
             tabJL[0][i].setUpperLeftCornerLabel(String.valueOf(8-i));
@@ -108,18 +115,25 @@ public class Window extends JFrame implements Observer, EventVisitor {
         setLocationRelativeTo(null);
         setVisible(true);
 
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                Component component = e.getComponent();
-                if (component instanceof JFrame frame) {
-                    int size = min(frame.getWidth(), frame.getHeight());
-                    frame.setSize(size, size);
-                }
-            }
-        });
+//        addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                Component component = e.getComponent();
+//                if (component instanceof JFrame frame) {
+//                    int size = min(frame.getWidth(), frame.getHeight());
+//                    frame.setSize(size, size);
+//                }
+//            }
+//        });
     }
 
+    /**
+     * Displays a ring around the available cells for the selected piece.
+     * The ring is gray for empty cells and red for cells with a piece (pieces that can be captured).
+     * @param game The game instance
+     * @param ii x coordinate of the piece
+     * @param jj y coordinate of the piece
+     */
     private void colorAvailableCells(Game game, int ii, int jj) {
         Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
         if (piece != null && piece.getColor() == game.getCurrentPlayer().getColor()) {
@@ -146,11 +160,6 @@ public class Window extends JFrame implements Observer, EventVisitor {
         return new ImageIcon(icon.getImage().getScaledInstance(size, size, Image.SCALE_SMOOTH));
     }
 
-    private ImageIcon getScaledIcon(String path, int size) {
-        ImageIcon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource(path)));
-        return getScaledIcon(icon, size);
-    }
-
     private void changePlayerWindowTitle(PieceColor color){
         setTitle("Chess Master - " + color + " to play");
     }
@@ -166,6 +175,10 @@ public class Window extends JFrame implements Observer, EventVisitor {
         };
     }
 
+    /**
+     * Updates the chessboard with the current state of the game.
+     * This method is called whenever there is a change in the game state.
+     */
     public void updateBoard() {
         BiMap<Position, Cell> cells = this.game.getBoard().getCells();
         for (int i = 0; i < 8; i++) {
@@ -219,6 +232,8 @@ public class Window extends JFrame implements Observer, EventVisitor {
                     new Bishop(color),
                     new Knight(color)
             }).map(piece -> pieceIcons.getOrDefault(piece, null)).toArray(ImageIcon[]::new);
+
+
             int choice = JOptionPane.showOptionDialog(this, game.languageService.getMessage(Message.PROMOTE, null), "Promotion",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
             Position piecePosition = event.getFrom();
@@ -245,7 +260,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
     }
 
     @Override
-    public void visit(PatEvent event) {
+    public void visit(StalemateEvent event) {
         JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.STALEMATE, null));
     }
 

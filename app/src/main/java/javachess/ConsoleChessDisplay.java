@@ -5,6 +5,9 @@ import javachess.pieces.*;
 
 import java.util.*;
 
+/**
+ * Non-GUI display for chess game.
+ */
 public class ConsoleChessDisplay implements Observer, EventVisitor {
 
     final Game game;
@@ -23,6 +26,9 @@ public class ConsoleChessDisplay implements Observer, EventVisitor {
         game.playGame();
     }
 
+    /**
+     * Outputs the chessboard in the console, including every position marker
+     */
     public void displayBoard() {
         clearConsole();
         BiMap<Position, Cell> cells = this.game.getBoard().getCells();
@@ -51,6 +57,10 @@ public class ConsoleChessDisplay implements Observer, EventVisitor {
         System.out.println(sb);
     }
 
+    /**
+     * Main loop for user input.
+     * It waits for the user to enter a move and then processes it.
+     */
     private void mainLoop() {
         new Thread(() -> {
             Scanner scanner = new Scanner(System.in);
@@ -83,6 +93,9 @@ public class ConsoleChessDisplay implements Observer, EventVisitor {
         };
     }
 
+    /**
+     * Clears the console screen using ANSI escape codes.
+     */
     private void clearConsole(){
         System.out.print("\033[H\033[2J");
         System.out.flush();
@@ -145,7 +158,7 @@ public class ConsoleChessDisplay implements Observer, EventVisitor {
     }
 
     @Override
-    public void visit(PatEvent event) {
+    public void visit(StalemateEvent event) {
         System.out.println("Stalemate!");
         gameDone = true;
     }

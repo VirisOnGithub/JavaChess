@@ -4,6 +4,9 @@ import javachess.Event;
 import javachess.EventVisitor;
 import javachess.PieceColor;
 
+/**
+ * Event that changes the player whose turn it is.
+ */
 public class ChangePlayerEvent extends Event {
     private final PieceColor color;
 

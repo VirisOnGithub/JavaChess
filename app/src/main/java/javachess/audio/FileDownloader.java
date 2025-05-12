@@ -18,6 +18,10 @@ public class FileDownloader {
         initAudios();
     }
 
+    /**
+     * Initializes the audio files by checking if they exist in the 'resources' folder.
+     * @return true if all files are present, false otherwise.
+     */
     public static boolean initAudios() {
         for (String file : files) {
             String fileNameWithExtension = file + ".wav";
@@ -34,6 +38,11 @@ public class FileDownloader {
         return true;
     }
 
+    /**
+     * Checks if a file exists in the specified path.
+     * @param fileNameWithExtension the name of the file with its extension.
+     * @return true if the file exists, false otherwise.
+     */
     private static boolean fileExists(String fileNameWithExtension) {
         File file = new File(fileNameWithExtension);
         if (file.exists()) {
@@ -45,28 +54,33 @@ public class FileDownloader {
         }
     }
 
-private static void downloadFile(String fileName) throws IOException, URISyntaxException {
-    // Chemin vers le dossier resources
-    File resourcesDir = new File(resourcesPath);
+    /**
+     * Downloads a file from the specified URL and saves it to the 'resources' folder.
+     * @param fileName the name of the file to be downloaded (without extension).
+     * @throws IOException if an I/O error occurs.
+     * @throws URISyntaxException if the URI syntax is incorrect.
+     */
+    private static void downloadFile(String fileName) throws IOException, URISyntaxException {
+        File resourcesDir = new File(resourcesPath);
 
-    // Crée le dossier resources s'il n'existe pas
-    if (!resourcesDir.exists()) {
-        if (!resourcesDir.mkdirs()) {
-            throw new IOException("Impossible de créer le dossier resources : " + resourcesPath);
+        // Create the resources directory if it doesn't exist
+        if (!resourcesDir.exists()) {
+            if (!resourcesDir.mkdirs()) {
+                throw new IOException("Unable to create folder: " + resourcesPath);
+            }
+        }
+
+        // Complete path for the file
+        String fileNameWithExtension = fileName.endsWith(".wav") ? fileName : fileName + ".wav";
+        File outputFile = new File(resourcesDir, fileNameWithExtension);
+
+        // File URL
+        URL fileURL = new URI(baseURL + fileNameWithExtension).toURL();
+
+        // File download
+        try (ReadableByteChannel rbc = Channels.newChannel(fileURL.openStream());
+         FileOutputStream fos = new FileOutputStream(outputFile)) {
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         }
     }
-
-    // Chemin complet du fichier dans le dossier resources
-    String fileNameWithExtension = fileName.endsWith(".wav") ? fileName : fileName + ".wav";
-    File outputFile = new File(resourcesDir, fileNameWithExtension);
-
-    // URL du fichier à télécharger
-    URL fileURL = new URI(baseURL + fileNameWithExtension).toURL();
-
-    // Téléchargement du fichier
-    try (ReadableByteChannel rbc = Channels.newChannel(fileURL.openStream()); 
-     FileOutputStream fos = new FileOutputStream(outputFile)) {
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-    }
-}
 }

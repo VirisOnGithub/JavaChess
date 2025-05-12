@@ -14,6 +14,10 @@ public class KnightDecorator extends PieceDecorator {
         this.board = board;
     }
 
+    /**
+     * Get the valid cells for the knight.
+     * @return An ArrayList of valid cells for the knight.
+     */
     @Override
     public ArrayList<Cell> getValidCells() {
         Directions[] directions = {

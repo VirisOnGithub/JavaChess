@@ -2,6 +2,10 @@ package javachess;
 
 import javachess.decorators.PieceDecorator;
 
+/**
+ * Abstract class representing a chess piece.
+ * This class serves as a base for all specific piece types (e.g., Pawn, Rook, Knight, etc.).
+ */
 public abstract class Piece {
     private final PieceColor color;
     private Cell cell;
@@ -40,6 +44,12 @@ public abstract class Piece {
         return decorator;
     }
 
+    /**
+     * Finds the filename of the image representing the piece.
+     * The filename is constructed based on the color and type of the piece.
+     *
+     * @return The filename of the image representing the piece.
+     */
     public String findFile() {
         String filename = "";
         switch (color) {

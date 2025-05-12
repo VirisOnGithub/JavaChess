@@ -13,10 +13,15 @@ public class PawnDecorator extends PieceDecorator {
     }
 
 
+    /**
+     * Get the valid cells for the pawn.
+     * @return An ArrayList of valid cells for the pawn.
+     */
     @Override
     public ArrayList<Cell> getValidCells() {
         boolean isWhite = this.piece.getColor() == PieceColor.WHITE;
         Directions move = isWhite ? Directions.TOP : Directions.BOTTOM;
+        // Define the attack directions for the pawn (diagonal moves in which it should take a piece)
         Directions[] attack = isWhite
                 ? new Directions[]{Directions.TOP_LEFT, Directions.TOP_RIGHT}
                 : new Directions[]{Directions.BOTTOM_LEFT, Directions.BOTTOM_RIGHT};
@@ -44,6 +49,7 @@ public class PawnDecorator extends PieceDecorator {
                 }
             }
         }
+        // Check if the pawn can attack a piece
         checkValidCell(cell, left, cells, validCells);
         checkValidCell(cell, right, cells, validCells);
         return validCells;

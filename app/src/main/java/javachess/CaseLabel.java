@@ -3,10 +3,18 @@ package javachess;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Custom JLabel representing a case that is able to draw circles depending on where the pieces can go.
+ * It also displays label showing coordinates
+ */
 public class CaseLabel extends JLabel {
     private static final Color DEFAULT_COLOR = Color.GRAY;
+    private static final Font LABEL_FONT = new Font("Arial", Font.PLAIN, 20);
+    private static final float CIRCLE_THICKNESS = 8.0f;
+    private static final int PADDING = 5;
+
     private boolean showCircle;
-    private Color color = DEFAULT_COLOR;
+    private Color circleColor = DEFAULT_COLOR;
     private String upperLeftCornerLabel = "";
     private String lowerRightCornerLabel = "";
 
@@ -16,7 +24,7 @@ public class CaseLabel extends JLabel {
     }
 
     public void setDrawCircle(boolean showCircle, Color color) {
-        this.color = color;
+        this.circleColor = color;
         setDrawCircle(showCircle);
     }
 
@@ -33,44 +41,44 @@ public class CaseLabel extends JLabel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        // Enable anti-aliasing for smoother rendering
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Draw circle if enabled
         if (showCircle) {
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 128));
+            drawCircle(g2d);
+        }
 
-            float thickness = 8.0f;
-            g2d.setStroke(new BasicStroke(thickness));
+        // Draw labels
+        g.setFont(LABEL_FONT);
+        g.setColor(DEFAULT_COLOR);
 
-            int diameter = (int) (Math.min(getWidth(), getHeight()) * 0.9 - thickness);
-            int x = (getWidth() - diameter) / 2;
-            int y = (getHeight() - diameter) / 2;
-            g2d.drawOval(x, y, diameter, diameter);
-
-            g2d.setColor(DEFAULT_COLOR);
+        if (!upperLeftCornerLabel.isEmpty()) {
+            drawLabel(g, upperLeftCornerLabel, PADDING, PADDING + g.getFontMetrics().getAscent());
         }
 
         if (!lowerRightCornerLabel.isEmpty()) {
-            g.setFont(new Font("Arial", Font.PLAIN, 20));
             FontMetrics metrics = g.getFontMetrics();
             int labelWidth = metrics.stringWidth(lowerRightCornerLabel);
-
-            int x = getWidth() - labelWidth - 5;
-            int y = getHeight() - 5;
-            g.setColor(Color.GRAY);
-            g.drawString(lowerRightCornerLabel, x, y);
+            int x = getWidth() - labelWidth - PADDING;
+            int y = getHeight() - PADDING;
+            drawLabel(g, lowerRightCornerLabel, x, y);
         }
+    }
 
-        if (!upperLeftCornerLabel.isEmpty()) {
-            g.setFont(new Font("Arial", Font.PLAIN, 20));
-            FontMetrics metrics = g.getFontMetrics();
-            int labelHeight = metrics.getHeight();
+    private void drawCircle(Graphics2D g2d) {
+        g2d.setColor(new Color(circleColor.getRed(), circleColor.getGreen(), circleColor.getBlue(), 128));
+        g2d.setStroke(new BasicStroke(CIRCLE_THICKNESS));
 
-            int x = 5;
-            int y = labelHeight + 5;
-            g.setColor(Color.GRAY);
-            g.drawString(upperLeftCornerLabel, x, y);
-        }
+        int diameter = (int) (Math.min(getWidth(), getHeight()) * 0.9 - CIRCLE_THICKNESS);
+        int x = (getWidth() - diameter) / 2;
+        int y = (getHeight() - diameter) / 2;
+        g2d.drawOval(x, y, diameter, diameter);
+    }
+
+    private void drawLabel(Graphics g, String label, int x, int y) {
+        g.drawString(label, x, y);
     }
 }

@@ -6,6 +6,9 @@ import javachess.PieceColor;
 import javachess.PieceType;
 import javachess.decorators.KnightDecorator;
 
+/**
+ * Class representing a knight piece in chess.
+ */
 public class Knight extends Piece {
     public Knight(PieceColor color, Cell cell){
         super(color, cell);

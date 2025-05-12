@@ -4,6 +4,9 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class to parse a configuration file.
+ */
 public class ConfigParser {
     private final Map<String, String> configMap;
     private final String filePath;
