@@ -123,7 +123,7 @@ public class Game extends Observable {
                 notifyAll(new CheckEvent());
             }
             // handle positionHistory
-            int getPositionHistoryNumber = getPositionHistoryNumber();
+            int getPositionHistoryNumber = getPositionHistoryNumber(playerColor);
             if (getPositionHistoryNumber > 2) {
                 notifyAll(new SoundEvent("game-end"));
                 notifyAll(new DrawEvent("The game is a draw due to the threefold repetition rule."));
@@ -149,10 +149,11 @@ public class Game extends Observable {
 
     /**
      * Get the number of times the current position has been played.
+     * @param color The color of the player.
      * @return The number of times the current position has been played.
      */
-    private int getPositionHistoryNumber() {
-        return history.compute(board.getIdString(), (key, value) -> value == null ? 1 : value + 1);
+    private int getPositionHistoryNumber(PieceColor color) {
+        return history.compute(board.getSimplifiedFEN(color), (key, value) -> value == null ? 1 : value + 1);
     }
 
     private void incrementFiftyMoveRuleCounter() {

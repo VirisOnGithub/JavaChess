@@ -4,9 +4,12 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * SettingsPanel class that provides a GUI for configuring game settings.
@@ -18,17 +21,24 @@ public class SettingsPanel extends JDialog {
     private JComboBox<String> languageDropdown;
     private JCheckBox soundToggle;
     private final ConfigParser configParser;
+    private final LanguageService languageService;
 
     public SettingsPanel(JFrame parent) {
         // Initialize the dialog
         super(parent, "Settings", true);
         setSize(400, 300);
         setLocationRelativeTo(parent);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
         // Initialize the configuration parser
         configParser = new ConfigParser("settings.conf");
+
+        // Create conf file if it doesn't exist
+        createConfFileIfNotExists();
+
+        languageService = new LanguageService();
+        languageService.setLanguage(configParser.getLanguage());
 
         // Main panel setup
         JPanel mainPanel = createMainPanel();
@@ -43,8 +53,13 @@ public class SettingsPanel extends JDialog {
         // Add the main panel to the dialog
         add(mainPanel);
 
-        // Create conf file if it doesn't exist
-        createConfFileIfNotExists();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                dispose();
+                new ChessGameMenu().setVisible(true);
+            }
+        });
     }
 
     private void createConfFileIfNotExists() {
@@ -75,7 +90,7 @@ public class SettingsPanel extends JDialog {
      * Adds the title label to the main panel.
      */
     private void addTitleLabel(JPanel panel) {
-        JLabel titleLabel = new JLabel("Settings");
+        JLabel titleLabel = new JLabel(languageService.getMessage(Message.SETTINGS));
         titleLabel.setFont(new Font("Serif", Font.BOLD, 24));
         titleLabel.setForeground(new Color(255, 215, 0));
 
@@ -90,12 +105,12 @@ public class SettingsPanel extends JDialog {
      * Adds the language dropdown to the main panel.
      */
     private void addLanguageDropdown(JPanel panel) {
-        JLabel languageLabel = createLabel("Language: ");
+        JLabel languageLabel = createLabel(languageService.getMessage(Message.LANGUAGE) + ": ");
 
         // Load the current language from the config file
-        String currentLanguage = configParser.getValue("CHESS_LANGUAGE", "English");
+        String currentLanguage = configParser.getValue("CHESS_LANGUAGE", languageService.getMessage(Message.ENGLISH));
 
-        languageDropdown = new JComboBox<>(new String[]{"English", "French"});
+        languageDropdown = new JComboBox<>(Arrays.stream(new Message[]{Message.ENGLISH, Message.FRENCH}).map(languageService::getMessage).toArray(String[]::new));
         languageDropdown.setSelectedItem(currentLanguage);
         styleDropdown(languageDropdown);
 
@@ -116,7 +131,7 @@ public class SettingsPanel extends JDialog {
      * Adds the piece set dropdown to the main panel.
      */
     private void addPieceSetDropdown(JPanel panel) {
-        JLabel pieceSetLabel = createLabel("Piece Set: ");
+        JLabel pieceSetLabel = createLabel(languageService.getMessage(Message.PIECE_SET) + ": ");
 
         // Load the current piece set from the config file
         String currentPieceSet = configParser.getValue("CHESS_PIECE_SET", "Classic");
@@ -142,12 +157,12 @@ public class SettingsPanel extends JDialog {
      * Adds the sound toggle checkbox to the main panel.
      */
     private void addSoundToggle(JPanel panel) {
-        JLabel soundLabel = createLabel("Sound: ");
+        JLabel soundLabel = createLabel(languageService.getMessage(Message.SOUND) + ": ");
 
         // Load the current sound setting from the config file
         boolean isSoundEnabled = Boolean.parseBoolean(configParser.getValue("CHESS_SOUND_ENABLED", "true"));
 
-        soundToggle = new JCheckBox("Enable Music");
+        soundToggle = new JCheckBox(languageService.getMessage(Message.ENABLE_SOUND));
         soundToggle.setSelected(isSoundEnabled);
         styleCheckbox(soundToggle);
 
@@ -168,7 +183,7 @@ public class SettingsPanel extends JDialog {
      * Adds the save button to the main panel.
      */
     private void addSaveButton(JPanel panel) {
-        JButton saveButton = new JButton("Save");
+        JButton saveButton = new JButton(languageService.getMessage(Message.SAVE));
         saveButton.setFont(new Font("SansSerif", Font.BOLD, 16));
         saveButton.setForeground(Color.WHITE);
         saveButton.setBackground(new Color(50, 50, 50));
@@ -199,7 +214,7 @@ public class SettingsPanel extends JDialog {
         try {
             configParser.save();
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Failed to save settings.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, languageService.getMessage(Message.SAVING_FAILED), languageService.getEnglishMessage(Message.ERROR), JOptionPane.ERROR_MESSAGE);
         }
 
         // Close the dialog

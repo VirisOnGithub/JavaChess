@@ -10,4 +10,21 @@ public enum Message {
     STALEMATE,
     DRAW,
     PROMOTE,
+    // Settings
+    SETTINGS,
+    LANGUAGE,
+    ENGLISH,
+    FRENCH,
+    PIECE_SET,
+    SOUND,
+    ENABLE_SOUND,
+    SAVE,
+    SAVING_FAILED,
+    ERROR,
+
+    // Main Menu
+    MAIN_MENU,
+    PLAY_VS_PLAYER,
+    LOAD_FROM_PGN,
+    OPEN_PGN_FILE,
 }

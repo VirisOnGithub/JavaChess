@@ -16,9 +16,13 @@ import java.awt.event.MouseEvent;
  * It includes buttons to start a new game, load a game from a PGN file, and access settings.
  */
 public class ChessGameMenu extends JFrame {
+    private final LanguageService languageService = new LanguageService();
+
 
     public ChessGameMenu() {
-        setTitle("Chess Master - Main Menu");
+        languageService.setLanguage(new ConfigParser().getLanguage());
+
+        setTitle("Chess Master - " + languageService.getMessage(Message.MAIN_MENU));
         setSize(500, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -47,21 +51,21 @@ public class ChessGameMenu extends JFrame {
         mainPanel.add(titleLabel);
 
         // Buttons
-        mainPanel.add(createStyledButton("Play vs Player", new AbstractAction() {
+        mainPanel.add(createStyledButton(languageService.getMessage(Message.PLAY_VS_PLAYER), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onPlay(e);
             }
         }));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        mainPanel.add(createStyledButton("Load from PGN", new AbstractAction() {
+        mainPanel.add(createStyledButton(languageService.getMessage(Message.LOAD_FROM_PGN), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onLoadPGN(e);
             }
         }));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        mainPanel.add(createStyledButton("Settings", new AbstractAction() {
+        mainPanel.add(createStyledButton(languageService.getMessage(Message.SETTINGS), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onSettings(e);
@@ -131,7 +135,7 @@ public class ChessGameMenu extends JFrame {
      */
     private void onLoadPGN(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Open PGN File");
+        fileChooser.setDialogTitle(languageService.getMessage(Message.OPEN_PGN_FILE));
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             String filePath = fileChooser.getSelectedFile().getAbsolutePath();
@@ -162,6 +166,7 @@ public class ChessGameMenu extends JFrame {
      * @param e The action event triggered by the button click
      */
     private void onSettings(ActionEvent e) {
+        this.dispose();
         SettingsPanel settingsPanel = new SettingsPanel(this);
         settingsPanel.setVisible(true);
     }

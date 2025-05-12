@@ -319,15 +319,7 @@ public class Board {
         }
     }
 
-    /**
-     * Converts the current state of the board to a FEN string.
-     * see <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">here</a>
-     *
-     * @param fiftyMoveRuleCounter the counter for the fifty-move rule
-     * @param color                the color of the player to move
-     * @return the FEN string representing the current state of the board
-     */
-    public String getFEN(int fiftyMoveRuleCounter, PieceColor color) {
+    public String getSimplifiedFEN(PieceColor color) {
         StringBuilder fen = new StringBuilder();
         for (int i = 0; i < 8; i++) {
             int emptyCount = 0;
@@ -354,9 +346,20 @@ public class Board {
         fen.append(" ").append(color == PieceColor.BLACK ? "w" : "b"); // active colour is not the one that just played
         fen.append(" ").append(getCastlingRights());
         fen.append(" ").append(isEnPassantPossible ? lastMove.getMiddlePosition().asPGN() : "-");
-        fen.append(" ").append(fiftyMoveRuleCounter);
-        fen.append(" ").append(moveCounter);
         return fen.toString();
+    }
+
+    /**
+     * Converts the current state of the board to a FEN string.
+     * see <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">here</a>
+     *
+     * @param fiftyMoveRuleCounter the counter for the fifty-move rule
+     * @param color                the color of the player to move
+     * @return the FEN string representing the current state of the board
+     */
+    public String getFEN(int fiftyMoveRuleCounter, PieceColor color) {
+        return getSimplifiedFEN(color) + " " + fiftyMoveRuleCounter +
+                " " + moveCounter;
     }
 
     /**

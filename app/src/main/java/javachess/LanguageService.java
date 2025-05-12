@@ -26,12 +26,30 @@ public class LanguageService {
         return formatMessage(message, variables);
     }
 
-    private String getEnglishMessage(Message key) {
+    public String getMessage(Message key) {
+        return getMessage(key, null);
+    }
+
+    public String getEnglishMessage(Message key) {
         return switch (key) {
             case CHECKMATE -> "Checkmate! {player} wins!";
             case CHECK -> "Check!";
             case STALEMATE -> "Stalemate!";
             case PROMOTE -> "Choose a piece to promote to:";
+            case SETTINGS -> "Settings";
+            case LANGUAGE -> "Language";
+            case ENGLISH -> "English";
+            case FRENCH -> "French";
+            case PIECE_SET -> "Piece Set";
+            case SOUND -> "Sound";
+            case ENABLE_SOUND -> "Enable Sound";
+            case SAVE -> "Save";
+            case SAVING_FAILED -> "Failed to save settings.";
+            case ERROR -> "Error";
+            case MAIN_MENU -> "Main Menu";
+            case PLAY_VS_PLAYER -> "Play vs Player";
+            case LOAD_FROM_PGN -> "Load from PGN file";
+            case OPEN_PGN_FILE -> "Open PGN file";
             default -> "Unknown message key";
         };
     }
@@ -42,6 +60,20 @@ public class LanguageService {
             case CHECK -> "Échec!";
             case STALEMATE -> "Pat!";
             case PROMOTE -> "Choisissez une pièce pour la promotion:";
+            case SETTINGS -> "Paramètres";
+            case LANGUAGE -> "Langue";
+            case ENGLISH -> "Anglais";
+            case FRENCH -> "Français";
+            case PIECE_SET -> "Ensemble de pièces";
+            case SOUND -> "Son";
+            case ENABLE_SOUND -> "Activer le son";
+            case SAVE -> "Sauvegarder";
+            case SAVING_FAILED -> "Échec de la sauvegarde des paramètres.";
+            case ERROR -> "Erreur";
+            case MAIN_MENU -> "Menu principal";
+            case PLAY_VS_PLAYER -> "Jouer contre un joueur";
+            case LOAD_FROM_PGN -> "Charger depuis un fichier PGN";
+            case OPEN_PGN_FILE -> "Ouvrir un fichier PGN";
             default -> "Clé de message inconnue";
         };
     }

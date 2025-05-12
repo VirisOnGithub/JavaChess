@@ -261,7 +261,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(StalemateEvent event) {
-        JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.STALEMATE, null));
+        JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.STALEMATE));
     }
 
     @Override
