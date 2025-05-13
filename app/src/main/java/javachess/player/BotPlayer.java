@@ -1,9 +1,11 @@
 package javachess.player;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
 import javachess.Game;
@@ -49,6 +51,25 @@ public class BotPlayer implements Player {
         System.out.println(BASE_URL + urlString);
         URL url = new URL(urlString);
 
+        JSONObject jsonObject = requestAPI(url);
+        String bestMove = jsonObject.optString("bestmove", null);
+        System.out.println("Best Move: " + bestMove);
+        return bestMove.split(" ")[1];
+    }
+
+    public static boolean testConnection() {
+        try {
+            URL url = new URL(BASE_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            int responseCode = conn.getResponseCode();
+            return responseCode == 200;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private static JSONObject requestAPI(URL url) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
 
@@ -67,9 +88,7 @@ public class BotPlayer implements Player {
         conn.disconnect();
 
         JSONObject jsonObject = new JSONObject(responseContent.toString());
-        String bestMove = jsonObject.optString("bestmove", null);
-        System.out.println("Best Move: " + bestMove);
-        return bestMove.split(" ")[1];
+        return jsonObject;
     }
 
     // Example usage:

@@ -2,6 +2,7 @@ package javachess;
 
 import javachess.parser.Instruction;
 import javachess.parser.Parser;
+import javachess.player.BotPlayer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -58,13 +59,15 @@ public class ChessGameMenu extends JFrame {
             }
         }));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        mainPanel.add(createStyledButton(languageService.getMessage(Message.PLAY_VS_COMPUTER), new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onPlayVsComputer();
-            }
-        }));
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        if(BotPlayer.testConnection()){
+            mainPanel.add(createStyledButton(languageService.getMessage(Message.PLAY_VS_COMPUTER), new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    onPlayVsComputer();
+                }
+            }));
+            mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        }
         mainPanel.add(createStyledButton(languageService.getMessage(Message.LOAD_FROM_PGN), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
