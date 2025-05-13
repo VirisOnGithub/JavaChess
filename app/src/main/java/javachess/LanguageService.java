@@ -48,6 +48,7 @@ public class LanguageService {
             case ERROR -> "Error";
             case MAIN_MENU -> "Main Menu";
             case PLAY_VS_PLAYER -> "Play vs Player";
+            case PLAY_VS_COMPUTER -> "Play vs Computer";
             case LOAD_FROM_PGN -> "Load from PGN file";
             case OPEN_PGN_FILE -> "Open PGN file";
             case WHITE -> "White";
@@ -75,6 +76,7 @@ public class LanguageService {
             case ERROR -> "Erreur";
             case MAIN_MENU -> "Menu principal";
             case PLAY_VS_PLAYER -> "Jouer contre un joueur";
+            case PLAY_VS_COMPUTER -> "Jouer contre l'ordinateur";
             case LOAD_FROM_PGN -> "Charger depuis un fichier PGN";
             case OPEN_PGN_FILE -> "Ouvrir un fichier PGN";
             case WHITE -> "Blancs";

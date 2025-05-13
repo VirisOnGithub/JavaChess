@@ -58,6 +58,13 @@ public class ChessGameMenu extends JFrame {
             }
         }));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        mainPanel.add(createStyledButton(languageService.getMessage(Message.PLAY_VS_COMPUTER), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onPlayVsComputer();
+            }
+        }));
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(createStyledButton(languageService.getMessage(Message.LOAD_FROM_PGN), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,6 +128,16 @@ public class ChessGameMenu extends JFrame {
         new Thread(() -> {
             this.dispose();
             Game game = new Game();
+            new Window(game);
+            game.playGame();
+        }).start();
+    }
+
+    private void onPlayVsComputer() {
+        // Avoid blocking the current thread, (while loop)
+        new Thread(() -> {
+            this.dispose();
+            Game game = new Game(true);
             new Window(game);
             game.playGame();
         }).start();

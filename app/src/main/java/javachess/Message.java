@@ -25,6 +25,7 @@ public enum Message {
     // Main Menu
     MAIN_MENU,
     PLAY_VS_PLAYER,
+    PLAY_VS_COMPUTER,
     LOAD_FROM_PGN,
     OPEN_PGN_FILE,
 

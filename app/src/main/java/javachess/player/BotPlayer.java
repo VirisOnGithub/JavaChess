@@ -67,7 +67,9 @@ public class BotPlayer implements Player {
         conn.disconnect();
 
         JSONObject jsonObject = new JSONObject(responseContent.toString());
-        return jsonObject.optString("bestmove", null).split(" ")[1];
+        String bestMove = jsonObject.optString("bestmove", null);
+        System.out.println("Best Move: " + bestMove);
+        return bestMove.split(" ")[1];
     }
 
     // Example usage:
@@ -97,13 +99,7 @@ public class BotPlayer implements Player {
 
     @Override
     public Move getMove() {
-        synchronized (game) {
-            try {
-                game.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        System.out.println("BotPlayer.getMove()");
         String bestMoveString;
         try {
             bestMoveString = getBestMove(game.getFEN(), depth);
@@ -113,10 +109,9 @@ public class BotPlayer implements Player {
         if (bestMoveString == null) {
             throw new RuntimeException("No best move found.");
         }
+        System.out.println("Best Move: " + bestMoveString);
+        System.out.println("ParseMove: " + parseMove(bestMoveString));
         game.move = parseMove(bestMoveString);
-        synchronized (game){
-            game.notify();
-        }
         return game.getMove();
     }
 }

@@ -30,21 +30,44 @@ public class Game extends Observable {
      * Constructor for the Game class.
      * Initializes the board, players, and language service.
      */
-    public Game(){
-        this(new Board());
+    public Game() {
+        this(new Board(), false);
+    }
+
+    /**
+     * Constructor for the Game class.
+     * Initializes the board, players, and language service.
+     * @param withBot True if the game should be played against a bot, false otherwise.
+     */
+    public Game(boolean withBot) {
+        this(new Board(), withBot);
+    }
+
+    /**
+     * Constructor for the Game class.
+     * Initializes the board, players, and language service.
+     * @param board The board to be used in the game.
+     */
+    public Game(Board board) {
+        this(board, false);
     }
 
     /**
      * Constructor for the Game class.
      * @param board The board to be used in the game.
+     * @param withBot True if the game should be played against a bot, false otherwise.
      */
-    public Game(Board board){
+    public Game(Board board, boolean withBot){
         this.configParser = new ConfigParser();
         this.board = board;
         players = new ArrayList<>();
         languageService = new LanguageService();
         languageService.setLanguage(configParser.getLanguage());
-        addTwoPlayers();
+        if(withBot){
+            addPlayerAndBot(10);
+        } else {
+            addTwoPlayers();
+        }
     }
 
     public static void main(String[] args) {

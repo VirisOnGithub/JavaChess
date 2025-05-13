@@ -343,7 +343,7 @@ public class Board {
                 fen.append("/");
             }
         }
-        fen.append(" ").append(color == PieceColor.BLACK ? "w" : "b"); // active colour is not the one that just played
+        fen.append(" ").append(color == PieceColor.BLACK ? "b" : "w");
         fen.append(" ").append(getCastlingRights());
         fen.append(" ").append(isEnPassantPossible ? lastMove.getMiddlePosition().asPGN() : "-");
         return fen.toString();
