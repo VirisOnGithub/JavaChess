@@ -76,6 +76,7 @@ public class ConfigParser {
         int language = Integer.parseInt(getValue("CHESS_LANGUAGE", "0"));
         return switch (language) {
             case 1 -> Language.FRENCH;
+            case 2 -> Language.SPANISH;
             default -> Language.ENGLISH;
         };
     }

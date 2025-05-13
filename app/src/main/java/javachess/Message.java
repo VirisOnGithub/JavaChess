@@ -17,6 +17,7 @@ public enum Message {
     LANGUAGE,
     ENGLISH,
     FRENCH,
+    SPANISH,
     PIECE_SET,
     SOUND,
     ENABLE_SOUND,

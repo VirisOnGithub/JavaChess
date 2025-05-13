@@ -112,7 +112,7 @@ public class SettingsPanel extends JDialog {
         Language currentLanguage = Language.idToLanguage(Integer.parseInt(configParser.getValue("CHESS_LANGUAGE", "0")));
         Message currentLanguageMessage = Language.getLanguageMap().get(currentLanguage);
 
-        languageDropdown = new JComboBox<>(new Message[]{Message.ENGLISH, Message.FRENCH});
+        languageDropdown = new JComboBox<>(Arrays.stream(Language.values()).map((e) -> Language.getLanguageMap().get(e)).toArray(Message[]::new));
         languageDropdown.setSelectedItem(currentLanguageMessage);
         languageDropdown.setRenderer(new DefaultListCellRenderer() {
             @Override

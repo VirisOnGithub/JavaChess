@@ -21,9 +21,41 @@ public class LanguageService {
     public String getMessage(Message key, Map<String, String> variables) {
         String message = switch (language) {
             case FRENCH -> getFrenchMessage(key);
+            case SPANISH -> getSpanishMessage(key);
             default -> getEnglishMessage(key);
         };
         return formatMessage(message, variables);
+    }
+
+    private String getSpanishMessage(Message key) {
+        return switch (key) {
+            case CHECKMATE -> "¡Jaque mate! {player} gana!";
+            case CHECK -> "¡Jaque!";
+            case STALEMATE -> "¡Tablas!";
+            case DRAW -> "Empate";
+            case THREEFOLD_REPETITION -> "Este juego es un empate debido a la regla de repetición.";
+            case FIFTY_MOVES -> "Este juego es un empate debido a la regla de los cincuenta movimientos.";
+            case PROMOTE -> "Elige una pieza para promover:";
+            case SETTINGS -> "Configuraciones";
+            case LANGUAGE -> "Idioma";
+            case ENGLISH -> "Inglés";
+            case FRENCH -> "Francés";
+            case SPANISH -> "Español";
+            case PIECE_SET -> "Juego de piezas";
+            case SOUND -> "Sonido";
+            case ENABLE_SOUND -> "Activar sonido";
+            case SAVE -> "Guardar";
+            case SAVING_FAILED -> "Error al guardar la configuración.";
+            case ERROR -> "Error";
+            case MAIN_MENU -> "Menú principal";
+            case PLAY_VS_PLAYER -> "Jugar contra un jugador";
+            case PLAY_VS_COMPUTER -> "Jugar contra la computadora";
+            case LOAD_FROM_PGN -> "Cargar desde archivo PGN";
+            case OPEN_PGN_FILE -> "Abrir archivo PGN";
+            case WHITE -> "Blancas";
+            case BLACK -> "Negras";
+            case TO_PLAY -> "{color} para jugar";
+        };
     }
 
     public String getMessage(Message key) {
@@ -43,6 +75,7 @@ public class LanguageService {
             case LANGUAGE -> "Language";
             case ENGLISH -> "English";
             case FRENCH -> "French";
+            case SPANISH -> "Spanish";
             case PIECE_SET -> "Piece Set";
             case SOUND -> "Sound";
             case ENABLE_SOUND -> "Enable Sound";
@@ -74,6 +107,7 @@ public class LanguageService {
             case LANGUAGE -> "Langue";
             case ENGLISH -> "Anglais";
             case FRENCH -> "Français";
+            case SPANISH -> "Espagnol";
             case PIECE_SET -> "Ensemble de pièces";
             case SOUND -> "Son";
             case ENABLE_SOUND -> "Activer le son";

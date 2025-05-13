@@ -9,11 +9,13 @@ import java.util.Map;
  */
 public enum Language {
     ENGLISH,
-    FRENCH;
+    FRENCH,
+    SPANISH;
 
     public static Language idToLanguage(int id) {
         return switch (id) {
             case 1 -> FRENCH;
+            case 2 -> SPANISH;
             default -> ENGLISH;
         };
     }
@@ -22,6 +24,7 @@ public enum Language {
         BiMap<Language, Message> lm = new BiMap<>();
         lm.put(ENGLISH, Message.ENGLISH);
         lm.put(FRENCH, Message.FRENCH);
+        lm.put(SPANISH, Message.SPANISH);
         return lm;
     }
 }
