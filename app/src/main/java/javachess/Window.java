@@ -161,7 +161,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
     }
 
     private void changePlayerWindowTitle(PieceColor color){
-        setTitle("Chess Master - " + color + " to play");
+        setTitle("Chess Master - " + game.languageService.getMessage(Message.TO_PLAY, Map.of("color", color.toString())));
     }
 
     public Piece createPiece(PieceType type, PieceColor pieceColor) {

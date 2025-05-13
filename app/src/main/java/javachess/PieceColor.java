@@ -8,13 +8,17 @@ public enum PieceColor {
     WHITE {
         @Override
         public String toString() {
-            return "White";
+            LanguageService ls = new LanguageService();
+            ls.setLanguage(new ConfigParser().getLanguage());
+            return ls.getMessage(Message.WHITE);
         }
     },
     BLACK {
         @Override
         public String toString() {
-            return "Black";
+            LanguageService ls = new LanguageService();
+            ls.setLanguage(new ConfigParser().getLanguage());
+            return ls.getMessage(Message.BLACK);
         }
     }
 }

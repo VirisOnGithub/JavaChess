@@ -27,4 +27,11 @@ public enum Message {
     PLAY_VS_PLAYER,
     LOAD_FROM_PGN,
     OPEN_PGN_FILE,
+
+    // Colors
+    WHITE,
+    BLACK,
+
+    // Window
+    TO_PLAY,
 }

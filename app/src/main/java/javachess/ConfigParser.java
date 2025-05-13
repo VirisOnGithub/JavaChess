@@ -73,9 +73,9 @@ public class ConfigParser {
     }
 
     public Language getLanguage() {
-        String language = getValue("CHESS_LANGUAGE", "English");
+        int language = Integer.parseInt(getValue("CHESS_LANGUAGE", "0"));
         return switch (language) {
-            case "French" -> Language.FRENCH;
+            case 1 -> Language.FRENCH;
             default -> Language.ENGLISH;
         };
     }

@@ -10,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * SettingsPanel class that provides a GUI for configuring game settings.
@@ -18,7 +19,7 @@ import java.util.Arrays;
 public class SettingsPanel extends JDialog {
 
     private JComboBox<String> pieceSetDropdown;
-    private JComboBox<String> languageDropdown;
+    private JComboBox<Message> languageDropdown;
     private JCheckBox soundToggle;
     private final ConfigParser configParser;
     private final LanguageService languageService;
@@ -68,7 +69,7 @@ public class SettingsPanel extends JDialog {
             if (writer.toString().isEmpty()) {
                 writer.write("CHESS_PIECE_SET=Classic\n");
                 writer.write("CHESS_SOUND_ENABLED=true\n");
-                writer.write("CHESS_LANGUAGE=English\n");
+                writer.write("CHESS_LANGUAGE=0\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -108,10 +109,20 @@ public class SettingsPanel extends JDialog {
         JLabel languageLabel = createLabel(languageService.getMessage(Message.LANGUAGE) + ": ");
 
         // Load the current language from the config file
-        String currentLanguage = configParser.getValue("CHESS_LANGUAGE", languageService.getMessage(Message.ENGLISH));
+        Language currentLanguage = Language.idToLanguage(Integer.parseInt(configParser.getValue("CHESS_LANGUAGE", "0")));
+        Message currentLanguageMessage = Language.getLanguageMap().get(currentLanguage);
 
-        languageDropdown = new JComboBox<>(Arrays.stream(new Message[]{Message.ENGLISH, Message.FRENCH}).map(languageService::getMessage).toArray(String[]::new));
-        languageDropdown.setSelectedItem(currentLanguage);
+        languageDropdown = new JComboBox<>(new Message[]{Message.ENGLISH, Message.FRENCH});
+        languageDropdown.setSelectedItem(currentLanguageMessage);
+        languageDropdown.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                if (value instanceof Message) {
+                    value = languageService.getMessage((Message) value); // Translate Message to current language
+                }
+                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            }
+        });
         styleDropdown(languageDropdown);
 
         JPanel languagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -203,13 +214,14 @@ public class SettingsPanel extends JDialog {
      */
     private void onSave(ActionEvent e) {
         String selectedPieceSet = (String) pieceSetDropdown.getSelectedItem();
-        String selectedLanguage = (String) languageDropdown.getSelectedItem();
+        Message languageMessage = (Message) Objects.requireNonNull(languageDropdown.getSelectedItem());
+        int selectedLanguage = Language.getLanguageMap().getReverse(languageMessage).ordinal();
         boolean isSoundEnabled = soundToggle.isSelected();
 
         // Save settings to the config file
         configParser.setValue("CHESS_PIECE_SET", selectedPieceSet);
         configParser.setValue("CHESS_SOUND_ENABLED", String.valueOf(isSoundEnabled));
-        configParser.setValue("CHESS_LANGUAGE", selectedLanguage);
+        configParser.setValue("CHESS_LANGUAGE", Integer.toString(selectedLanguage));
 
         try {
             configParser.save();
@@ -234,7 +246,7 @@ public class SettingsPanel extends JDialog {
     /**
      * Styles a dropdown to match the UI theme.
      */
-    private void styleDropdown(JComboBox<String> dropdown) {
+    private void styleDropdown(JComboBox<?> dropdown) {
         dropdown.setFont(new Font("SansSerif", Font.PLAIN, 14));
         dropdown.setBackground(new Color(50, 50, 50));
         dropdown.setForeground(Color.WHITE);

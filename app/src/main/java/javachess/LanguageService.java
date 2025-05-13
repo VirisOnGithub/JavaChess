@@ -50,15 +50,18 @@ public class LanguageService {
             case PLAY_VS_PLAYER -> "Play vs Player";
             case LOAD_FROM_PGN -> "Load from PGN file";
             case OPEN_PGN_FILE -> "Open PGN file";
+            case WHITE -> "White";
+            case BLACK -> "Black";
+            case TO_PLAY -> "{color} to play";
             default -> "Unknown message key";
         };
     }
 
     private String getFrenchMessage(Message key) {
         return switch (key) {
-            case CHECKMATE -> "Échec et mat! {player} gagne!";
-            case CHECK -> "Échec!";
-            case STALEMATE -> "Pat!";
+            case CHECKMATE -> "Échec et mat ! Les {player} gagnent !";
+            case CHECK -> "Échec !";
+            case STALEMATE -> "Pat !";
             case PROMOTE -> "Choisissez une pièce pour la promotion:";
             case SETTINGS -> "Paramètres";
             case LANGUAGE -> "Langue";
@@ -74,6 +77,9 @@ public class LanguageService {
             case PLAY_VS_PLAYER -> "Jouer contre un joueur";
             case LOAD_FROM_PGN -> "Charger depuis un fichier PGN";
             case OPEN_PGN_FILE -> "Ouvrir un fichier PGN";
+            case WHITE -> "Blancs";
+            case BLACK -> "Noirs";
+            case TO_PLAY -> "Trait aux {color}";
             default -> "Clé de message inconnue";
         };
     }
