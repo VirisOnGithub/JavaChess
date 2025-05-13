@@ -2,6 +2,7 @@ package javachess;
 
 import javachess.events.*;
 import javachess.pieces.Pawn;
+import javachess.player.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.Scanner;
  */
 public class Game extends Observable {
     private final ArrayList<Player> players;
-    protected Move move;
+    public Move move;
     private final Board board;
     private boolean gameDone = false;
     protected int actualPlayer = 0;
@@ -30,12 +31,7 @@ public class Game extends Observable {
      * Initializes the board, players, and language service.
      */
     public Game(){
-        this.configParser = new ConfigParser();
-        board = new Board();
-        players = new ArrayList<>();
-        languageService = new LanguageService();
-        languageService.setLanguage(configParser.getLanguage());
-        addTwoPlayers();
+        this(new Board());
     }
 
     /**
@@ -57,15 +53,12 @@ public class Game extends Observable {
         int choice = sc.nextInt();
         if (choice == 1) {
             Game game = new Game();
-            ConsoleChessDisplay consoleDisplay = new ConsoleChessDisplay(game);
+            new ConsoleChessDisplay(game);
             game.playGame();
         } else if (choice == 2) {
-            SwingUtilities.invokeLater(() -> {
-                new ChessGameMenu().setVisible(true);
-            });
+            SwingUtilities.invokeLater(() -> new ChessGameMenu().setVisible(true));
         } else {
             System.out.println("Invalid choice. Exiting.");
-            return;
         }
     }
 
@@ -81,8 +74,16 @@ public class Game extends Observable {
      * Shortcut method to add two players to the game.
      */
     private void addTwoPlayers(){
-        players.add(new Player(this, PieceColor.WHITE));
-        players.add(new Player(this, PieceColor.BLACK));
+        players.add(new HumanPlayer(this, PieceColor.WHITE));
+        players.add(new HumanPlayer(this, PieceColor.BLACK));
+    }
+
+    /**
+     * Shortcut method to add a player and a bot to the game.
+     */
+    private void addPlayerAndBot(int botDepth){
+        players.add(new HumanPlayer(this, PieceColor.WHITE));
+        players.add(new BotPlayer(this, PieceColor.BLACK, botDepth));
     }
 
     /**
@@ -141,7 +142,7 @@ public class Game extends Observable {
             boolean successMove;
             do {
                 Move move = currentPlayer.getMove();
-                successMove = setMove(move.from(), move.to(), false);
+                successMove = setMove(move, false);
             } while (!successMove);
             actualPlayer++;
         }
@@ -171,14 +172,13 @@ public class Game extends Observable {
 
     /**
      * Set the move for the game.
-     * @param from The position from which the piece is moved.
-     * @param to The position to which the piece is moved.
+     * @param move The move to be made.
      * @param castling True if the move is a castling move, false otherwise. It is false by default.
      * @return True if the move is valid, false otherwise.
      */
-    public boolean setMove(Position from, Position to, boolean castling) {
+    public boolean setMove(Move move, boolean castling) {
         boolean soundPlayed = false;
-        move = new Move(from, to);
+        Position from = move.from(), to = move.to();
         Cell fromCell = board.getCells().get(from);
         Cell toCell = board.getCells().get(to);
         Piece pieceFrom = fromCell.getPiece();
@@ -193,19 +193,11 @@ public class Game extends Observable {
         if (pieceFrom.getColor() != getCurrentPlayer().getColor()) {
             System.err.println("Invalid move: The piece does not belong to the current player.");
             notifyAll(new SoundEvent("illegal"));
-            soundPlayed = true;
             return false;
         }
 
         // check if the move is valid for the piece (check if the decorator is valid)
         if (!board.getValidCellsForBoard(fromCell.getPiece()).contains(toCell) && !castling) {
-//            System.out.println(String.valueOf(board.getValidCellsForBoard(fromCell.getPiece())
-//                    .stream()
-//                    .map((e) -> board.getCells().getReverse(e))
-//                    .collect(Collectors.toCollection(ArrayList::new))));
-//            System.out.println("\n");
-//            System.out.println(board.getCells().getReverse(toCell));
-//            System.out.println("from: " + board.getCells().getReverse(fromCell));
             System.err.println("Invalid move: The destination cell is not valid for the selected piece.");
             notifyAll(new SoundEvent("illegal"));
             return false;
@@ -239,7 +231,7 @@ public class Game extends Observable {
             Position rookTo = new Position(to.getX() + (to.getX() > from.getX() ? -1 : 1), from.getY());
             Piece rook = board.getCells().get(rookFrom).getPiece();
             if (rook != null && rook.getType() == PieceType.ROOK && rook.getColor() == pieceFrom.getColor()) {
-                setMove(rookFrom, rookTo, true);
+                setMove(new Move(rookFrom, rookTo), true);
             }
         }
 

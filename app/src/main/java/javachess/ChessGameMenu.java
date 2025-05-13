@@ -54,21 +54,21 @@ public class ChessGameMenu extends JFrame {
         mainPanel.add(createStyledButton(languageService.getMessage(Message.PLAY_VS_PLAYER), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onPlay(e);
+                onPlay();
             }
         }));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(createStyledButton(languageService.getMessage(Message.LOAD_FROM_PGN), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onLoadPGN(e);
+                onLoadPGN();
             }
         }));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(createStyledButton(languageService.getMessage(Message.SETTINGS), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onSettings(e);
+                onSettings();
             }
         }));
 
@@ -115,9 +115,8 @@ public class ChessGameMenu extends JFrame {
      * Action performed when the "Play" button is clicked.
      * This method starts a new game and disposes of the menu window.
      *
-     * @param e The action event triggered by the button click
      */
-    private void onPlay(ActionEvent e) {
+    private void onPlay() {
         // Avoid blocking the current thread, (while loop)
         new Thread(() -> {
             this.dispose();
@@ -131,9 +130,8 @@ public class ChessGameMenu extends JFrame {
      * Action performed when the "Load PGN" button is clicked.
      * This method opens a file chooser dialog to select a PGN file and loads the game from it.
      *
-     * @param e The action event triggered by the button click
      */
-    private void onLoadPGN(ActionEvent e) {
+    private void onLoadPGN() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle(languageService.getMessage(Message.OPEN_PGN_FILE));
         int result = fileChooser.showOpenDialog(this);
@@ -150,7 +148,7 @@ public class ChessGameMenu extends JFrame {
                 Game game = new Game(board);
                 for (Instruction moveInstr : parser.getMoves()) {
                     Move move = board.getMoveFromInstructions(moveInstr);
-                    game.setMove(move.from(), move.to(), false);
+                    game.setMove(move, false);
                     game.actualPlayer++;
                 }
                 new Window(game);
@@ -163,17 +161,14 @@ public class ChessGameMenu extends JFrame {
      * Action performed when the "Settings" button is clicked.
      * This method opens the settings panel.
      *
-     * @param e The action event triggered by the button click
      */
-    private void onSettings(ActionEvent e) {
+    private void onSettings() {
         this.dispose();
         SettingsPanel settingsPanel = new SettingsPanel(this);
         settingsPanel.setVisible(true);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new ChessGameMenu().setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new ChessGameMenu().setVisible(true));
     }
 }

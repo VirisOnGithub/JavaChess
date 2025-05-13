@@ -17,22 +17,20 @@ public class Position {
     }
 
     /**
-     * Converts a string representation of a position to a Position object.
+     * Constructs a Position object from a string representation.
      * @param part the string representation of the position (e.g., "a1", "h8")
-     * @return a Position object
      */
-    public static Position fromString(String part) {
+    public Position(String part) {
         if (part.length() != 2) {
             throw new IllegalArgumentException("Invalid position format");
         }
         char column = part.charAt(0);
         char row = part.charAt(1);
-        int x = column - 'a';
-        int y = 8 - (row - '0');
+        x = column - 'a';
+        y = 8 - (row - '0');
         if (x < 0 || x > 7 || y < 0 || y > 7) {
             throw new IllegalArgumentException("Position out of bounds");
         }
-        return new Position(x, y);
     }
 
     public boolean equals(Position position) {

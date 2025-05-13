@@ -2,6 +2,8 @@ package javachess;
 
 import javachess.events.*;
 import javachess.pieces.*;
+import javachess.player.HumanPlayer;
+import javachess.player.Player;
 
 import java.util.*;
 
@@ -72,10 +74,12 @@ public class ConsoleChessDisplay implements Observer, EventVisitor {
                     System.out.println("Invalid input. Please enter a valid move.");
                     continue;
                 }
-                Position from = Position.fromString(parts[0]);
-                Position to = Position.fromString(parts[1]);
-                synchronized (game) {
-                    game.getCurrentPlayer().setMove(from, to);
+                Position from = new Position(parts[0]);
+                Position to = new Position(parts[1]);
+                if (game.getCurrentPlayer() instanceof HumanPlayer humanPlayer) {
+                    synchronized (game) {
+                        humanPlayer.setMove(from, to);
+                    }
                 }
             }
         }).start();

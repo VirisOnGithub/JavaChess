@@ -12,6 +12,8 @@ import java.util.*;
 import javachess.audio.AudioPlayer;
 import javachess.events.*;
 import javachess.pieces.*;
+import javachess.player.HumanPlayer;
+import javachess.player.Player;
 
 import static java.lang.Math.min;
 
@@ -67,33 +69,35 @@ public class Window extends JFrame implements Observer, EventVisitor {
                 jl.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
-                        if(mouseClick == null){
-                            // check if first click was on a piece of another colour
-                            if (piece != null) {
-                                if(game.getCurrentPlayer().getColor() == piece.getColor()){
-                                    colorAvailableCells(game, ii, jj);
-                                    mouseClick = new Position(ii, jj);
-                                    lastColorClicked = piece.getColor();
-                                }
-                            }
-                        } else {
-                            Position mouseSecondClick = new Position(ii, jj);
-                            if((piece != null && piece.getColor() == lastColorClicked) || mouseClick.equals(mouseSecondClick)){
-                                // emulate the first click
-                                clearRingsFromBoard(game);
-                                if(!mouseClick.equals(mouseSecondClick)){
-                                    mouseClick = null;
-                                    mouseClicked(null);
-                                } else {
-                                    mouseClick = null;
+                        if(game.getCurrentPlayer() instanceof HumanPlayer humanPlayer) {
+                            Piece piece = game.getBoard().getCells().get(new Position(ii, jj)).getPiece();
+                            if(mouseClick == null){
+                                // check if first click was on a piece of another colour
+                                if (piece != null) {
+                                    if(humanPlayer.getColor() == piece.getColor()){
+                                        colorAvailableCells(game, ii, jj);
+                                        mouseClick = new Position(ii, jj);
+                                        lastColorClicked = piece.getColor();
+                                    }
                                 }
                             } else {
-                                if (!mouseClick.equals(mouseSecondClick)) {
-                                    game.getCurrentPlayer().setMove(mouseClick, mouseSecondClick);
+                                Position mouseSecondClick = new Position(ii, jj);
+                                if((piece != null && piece.getColor() == lastColorClicked) || mouseClick.equals(mouseSecondClick)){
+                                    // emulate the first click
+                                    clearRingsFromBoard(game);
+                                    if(!mouseClick.equals(mouseSecondClick)){
+                                        mouseClick = null;
+                                        mouseClicked(null);
+                                    } else {
+                                        mouseClick = null;
+                                    }
+                                } else {
+                                    if (!mouseClick.equals(mouseSecondClick)) {
+                                        humanPlayer.setMove(mouseClick, mouseSecondClick);
+                                    }
+                                    clearRingsFromBoard(game);
+                                    mouseClick = null;
                                 }
-                                clearRingsFromBoard(game);
-                                mouseClick = null;
                             }
                         }
                     }
