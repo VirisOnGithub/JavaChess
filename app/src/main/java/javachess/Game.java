@@ -150,7 +150,7 @@ public class Game extends Observable {
             int getPositionHistoryNumber = getPositionHistoryNumber(playerColor);
             if (getPositionHistoryNumber > 2) {
                 notifyAll(new SoundEvent("game-end"));
-                notifyAll(new DrawEvent("The game is a draw due to the threefold repetition rule."));
+                notifyAll(new DrawEvent(languageService.getMessage(Message.THREEFOLD_REPETITION)));
                 gameDone = true;
                 break;
             }
@@ -158,7 +158,7 @@ public class Game extends Observable {
             // handle fifty move rule (https://en.wikipedia.org/wiki/Fifty-move_rule)
             if (fiftyMoveRuleCounter >= 50) {
                 notifyAll(new SoundEvent("game-end"));
-                notifyAll(new DrawEvent("The game is a draw due to the fifty-move rule."));
+                notifyAll(new DrawEvent(languageService.getMessage(Message.FIFTY_MOVES)));
                 gameDone = true;
                 break;
             }
@@ -242,8 +242,6 @@ public class Game extends Observable {
         } else {
             resetFiftyMoveRuleCounter();
         }
-
-        System.out.println("FEN :" + getFEN());
 
         // handle castling
         if (pieceFrom.getType() == PieceType.KING && Math.abs(from.getX() - to.getX()) > 1) {

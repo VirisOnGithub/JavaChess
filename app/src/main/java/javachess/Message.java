@@ -9,6 +9,8 @@ public enum Message {
     CHECK,
     STALEMATE,
     DRAW,
+    THREEFOLD_REPETITION,
+    FIFTY_MOVES,
     PROMOTE,
     // Settings
     SETTINGS,

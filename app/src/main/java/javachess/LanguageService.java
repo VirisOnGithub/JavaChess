@@ -35,6 +35,9 @@ public class LanguageService {
             case CHECKMATE -> "Checkmate! {player} wins!";
             case CHECK -> "Check!";
             case STALEMATE -> "Stalemate!";
+            case DRAW -> "Draw";
+            case THREEFOLD_REPETITION -> "This game is a draw due to the threefold repetition rule.";
+            case FIFTY_MOVES -> "This game is a draw due to the fifty-move rule.";
             case PROMOTE -> "Choose a piece to promote to:";
             case SETTINGS -> "Settings";
             case LANGUAGE -> "Language";
@@ -63,6 +66,9 @@ public class LanguageService {
             case CHECKMATE -> "Échec et mat ! Les {player} gagnent !";
             case CHECK -> "Échec !";
             case STALEMATE -> "Pat !";
+            case DRAW -> "Match nul ";
+            case THREEFOLD_REPETITION -> "Cette partie est nulle en raison de la règle de la répétition.";
+            case FIFTY_MOVES -> "Cette partie est nulle en raison de la règle des cinquante coups.";
             case PROMOTE -> "Choisissez une pièce pour la promotion:";
             case SETTINGS -> "Paramètres";
             case LANGUAGE -> "Langue";

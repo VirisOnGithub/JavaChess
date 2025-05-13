@@ -260,7 +260,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(DrawEvent event) {
-        JOptionPane.showMessageDialog(this, "Draw! " + event.getReason());
+        JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.DRAW) + "!" + event.getReason());
     }
 
     @Override
