@@ -180,7 +180,8 @@ public class ChessGameMenu extends JFrame {
             }
         }
 
-        int depth = difficulty * 4 + 1; // Set depth based on difficulty
+        int depth = difficulty * 6 + 1; // Set depth based on difficulty
+        System.out.println("Selected difficulty: " + difficulties[difficulty] + " (depth: " + depth + ")");
 
         // Avoid blocking the current thread, (while loop)
         new Thread(() -> {
