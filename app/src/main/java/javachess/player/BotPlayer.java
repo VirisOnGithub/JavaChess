@@ -49,12 +49,10 @@ public class BotPlayer implements Player {
         }
         String urlString = BASE_URL + "?fen=" + java.net.URLEncoder.encode(fen, StandardCharsets.UTF_8)
                 + "&depth=" + depth;
-        System.out.println(BASE_URL + urlString);
         URL url = new URL(urlString);
 
         JSONObject jsonObject = requestAPI(url);
         String bestMove = jsonObject.optString("bestmove", null);
-        System.out.println("Best Move: " + bestMove);
         return bestMove.split(" ")[1];
     }
 
@@ -131,8 +129,6 @@ public class BotPlayer implements Player {
         if (bestMoveString == null) {
             throw new RuntimeException("No best move found.");
         }
-        System.out.println("Best Move: " + bestMoveString);
-        System.out.println("ParseMove: " + parseMove(bestMoveString));
         game.move = parseMove(bestMoveString);
         return game.getMove();
     }
