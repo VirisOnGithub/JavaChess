@@ -8,19 +8,21 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
-import javachess.Game;
-import javachess.Move;
-import javachess.PieceColor;
-import javachess.Position;
+import javachess.*;
+import javachess.pieces.Bishop;
+import javachess.pieces.Knight;
+import javachess.pieces.Queen;
+import javachess.pieces.Rook;
 import org.json.JSONObject;
 
 public class BotPlayer implements Player {
     private final Game game;
     private final PieceColor color;
     private int depth;
+    private String promoteTo = null;
 
     /**
-     * Base URL for the Stockfish API.
+     * Base URL for the Stockfish API.event.getColor())
      */
     private static final String BASE_URL = "https://stockfish.online/api/s/v2.php";
 
@@ -108,6 +110,9 @@ public class BotPlayer implements Player {
         // Assuming moveString is in the format "e2e4"
         Position from = new Position(moveString.substring(0, 2));
         Position to = new Position(moveString.substring(2, 4));
+        if (moveString.length() == 5){
+            promoteTo = moveString.substring(4, 5);
+        }
         return new Move(from, to);
     }
 
@@ -118,7 +123,6 @@ public class BotPlayer implements Player {
 
     @Override
     public Move getMove() {
-        System.out.println("BotPlayer.getMove()");
         String bestMoveString;
         try {
             bestMoveString = getBestMove(game.getFEN(), depth);
@@ -132,5 +136,18 @@ public class BotPlayer implements Player {
         System.out.println("ParseMove: " + parseMove(bestMoveString));
         game.move = parseMove(bestMoveString);
         return game.getMove();
+    }
+
+    public Piece getPromoteTo(Cell pawnCell) {
+        if (promoteTo != null) {
+            return switch (promoteTo) {
+                case "q" -> new Queen(this.getColor(), pawnCell);
+                case "r" -> new Rook(this.getColor(), pawnCell);
+                case "b" -> new Bishop(this.getColor(), pawnCell);
+                case "n" -> new Knight(this.getColor(), pawnCell);
+                default -> throw new IllegalArgumentException("Invalid promotion piece: " + promoteTo);
+            };
+        }
+        return null;
     }
 }

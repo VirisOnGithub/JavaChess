@@ -12,6 +12,7 @@ import java.util.*;
 import javachess.audio.AudioPlayer;
 import javachess.events.*;
 import javachess.pieces.*;
+import javachess.player.BotPlayer;
 import javachess.player.HumanPlayer;
 import javachess.player.Player;
 
@@ -221,37 +222,42 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(PromotionEvent event) {
+        Position piecePosition = event.getFrom();
+        Cell pawnCell = game.getBoard().getCells().get(piecePosition);
+        Piece pawn = pawnCell.getPiece();
         // we instance a new thread to avoid blocking the main thread
         new Thread(() -> {
-            // sleep to avoid process collision
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if(game.getCurrentPlayer() instanceof HumanPlayer){
+                // sleep to avoid process collision
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                PieceColor color = event.getFrom().getX() == 0 ? PieceColor.WHITE : PieceColor.BLACK;
+                ImageIcon[] options = Arrays.stream(new Piece[]{
+                        new Queen(color),
+                        new Rook(color),
+                        new Bishop(color),
+                        new Knight(color)
+                }).map(piece -> pieceIcons.getOrDefault(piece, null)).toArray(ImageIcon[]::new);
+
+
+                int choice = JOptionPane.showOptionDialog(this, game.languageService.getMessage(Message.PROMOTE, null), "Promotion",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+
+                // Send back the promoted piece to the game
+                game.promoteTo = switch (choice) {
+                    case 1 -> new Rook(pawn.getColor(), pawnCell);
+                    case 2 -> new Bishop(pawn.getColor(), pawnCell);
+                    case 3 -> new Knight(pawn.getColor(), pawnCell);
+                    default -> new Queen(pawn.getColor(), pawnCell);
+                };
+            } else {
+                BotPlayer bp = (BotPlayer) game.getCurrentPlayer();
+                game.promoteTo = bp.getPromoteTo(pawnCell);
             }
-            PieceColor color = event.getFrom().getX() == 0 ? PieceColor.WHITE : PieceColor.BLACK;
-            ImageIcon[] options = Arrays.stream(new Piece[]{
-                    new Queen(color),
-                    new Rook(color),
-                    new Bishop(color),
-                    new Knight(color)
-            }).map(piece -> pieceIcons.getOrDefault(piece, null)).toArray(ImageIcon[]::new);
-
-
-            int choice = JOptionPane.showOptionDialog(this, game.languageService.getMessage(Message.PROMOTE, null), "Promotion",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-            Position piecePosition = event.getFrom();
-            Cell pawnCell = game.getBoard().getCells().get(piecePosition);
-            Piece pawn = pawnCell.getPiece();
-
-            // Send back the promoted piece to the game
-            game.promoteTo = switch (choice) {
-                case 1 -> new Rook(pawn.getColor(), pawnCell);
-                case 2 -> new Bishop(pawn.getColor(), pawnCell);
-                case 3 -> new Knight(pawn.getColor(), pawnCell);
-                default -> new Queen(pawn.getColor(), pawnCell);
-            };
-
             synchronized (game){
                 game.notify();
             }
