@@ -64,7 +64,7 @@ public class Game extends Observable {
         languageService = new LanguageService();
         languageService.setLanguage(configParser.getLanguage());
         if(withBot){
-            addPlayerAndBot(10);
+            addPlayerAndBot(15);
         } else {
             addTwoPlayers();
         }

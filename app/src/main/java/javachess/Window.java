@@ -189,6 +189,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Piece piece = cells.get(new Position(i, j)).getPiece();
+                tabJL[i][j].setBackground((i + j) % 2 == 0 ? Color.WHITE : Color.BLACK);
                 if(piece != null){
                     tabJL[i][j].setIcon(pieceIcons.get(piece));
                 } else {
@@ -207,7 +208,14 @@ public class Window extends JFrame implements Observer, EventVisitor {
 
     @Override
     public void visit(CheckEvent event) {
-        JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.CHECK, null));
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece piece = game.getBoard().getCells().get(new Position(i, j)).getPiece();
+                if (piece != null && piece.getType() == PieceType.KING && piece.getColor() == game.getCurrentPlayer().getColor()) {
+                    tabJL[i][j].setBackground(Color.RED);
+                }
+            }
+        }
     }
 
     @Override

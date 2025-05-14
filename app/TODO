@@ -1,0 +1,8 @@
+halo rouge quand echec
+arrêter le jeu quand mat/pat/draw
+debug sounds
+
+
+pour le mat par insuffisance : si tour, dame ou pion : good
+faire un FEN loader
+roi en echec sur le roque, ça marche ?
