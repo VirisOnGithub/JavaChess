@@ -32,7 +32,7 @@ public class ChessGameMenu extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(javachess.view.Window.class.getResource("/classic/wK.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(GUIChessDisplay.class.getResource("/classic/wK.png")));
 
         // Background color
         getContentPane().setBackground(new Color(20, 20, 20));
@@ -142,17 +142,51 @@ public class ChessGameMenu extends JFrame {
         new Thread(() -> {
             this.dispose();
             Game game = new Game();
-            new javachess.view.Window(game);
+            new GUIChessDisplay(game);
             game.playGame();
         }).start();
     }
 
+    /**
+     * Action performed when the "Play vs Computer" button is clicked.
+     * This method starts a new game against the computer and disposes of the menu window.
+     *
+     */
     private void onPlayVsComputer() {
+        // create a radio button to select the difficulty
+        String[] difficulties = {languageService.getMessage(Message.EASY), languageService.getMessage(Message.NORMAL), languageService.getMessage(Message.HARD)};
+        JRadioButton[] difficultyButtons = new JRadioButton[difficulties.length];
+        ButtonGroup group = new ButtonGroup();
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        for (int i = 0; i < difficulties.length; i++) {
+            difficultyButtons[i] = new JRadioButton(difficulties[i]);
+            difficultyButtons[i].setBackground(new Color(30, 30, 30));
+            difficultyButtons[i].setForeground(Color.WHITE);
+            difficultyButtons[i].setSelected(i == 1); // Default to NORMAL
+            group.add(difficultyButtons[i]);
+            panel.add(difficultyButtons[i]);
+        }
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        int result = JOptionPane.showConfirmDialog(this, panel, languageService.getMessage(Message.SELECT_DIFFICULTY), JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result != JOptionPane.OK_OPTION) {
+            return; // User canceled
+        }
+        int difficulty = 1; // Default to NORMAL
+        for (int i = 0; i < difficultyButtons.length; i++) {
+            if (difficultyButtons[i].isSelected()) {
+                difficulty = i;
+                break;
+            }
+        }
+
+        int depth = difficulty * 4 + 1; // Set depth based on difficulty
+
         // Avoid blocking the current thread, (while loop)
         new Thread(() -> {
             this.dispose();
-            Game game = new Game(true);
-            new javachess.view.Window(game);
+            Game game = new Game(true, depth);
+            new GUIChessDisplay(game);
             game.playGame();
         }).start();
     }
@@ -182,7 +216,7 @@ public class ChessGameMenu extends JFrame {
                     game.setMove(move, false);
                     game.incrementPlayer();
                 }
-                new javachess.view.Window(game);
+                new GUIChessDisplay(game);
                 game.playGame();
             }).start();
         }
@@ -210,7 +244,7 @@ public class ChessGameMenu extends JFrame {
                 this.dispose();
                 Game game = new Game();
                 game.fromFEN(fen);
-                new Window(game);
+                new GUIChessDisplay(game);
                 game.playGame();
             }).start();
         }

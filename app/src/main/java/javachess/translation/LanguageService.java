@@ -53,6 +53,10 @@ public class LanguageService {
             case LOAD_FROM_PGN -> "Cargar desde archivo PGN";
             case LOAD_FROM_FEN -> "Cargar desde FEN";
             case OPEN_PGN_FILE -> "Abrir archivo PGN";
+            case SELECT_DIFFICULTY -> "Seleccionar dificultad";
+            case EASY -> "Fácil";
+            case NORMAL -> "Normal";
+            case HARD -> "Difícil";
             case WHITE -> "Blancas";
             case BLACK -> "Negras";
             case TO_PLAY -> "{color} para jugar";
@@ -89,6 +93,10 @@ public class LanguageService {
             case LOAD_FROM_PGN -> "Load from PGN file";
             case LOAD_FROM_FEN -> "Load from FEN paste";
             case OPEN_PGN_FILE -> "Open PGN file";
+            case SELECT_DIFFICULTY -> "Select difficulty";
+            case EASY -> "Easy";
+            case NORMAL -> "Normal";
+            case HARD -> "Hard";
             case WHITE -> "White";
             case BLACK -> "Black";
             case TO_PLAY -> "{color} to play";
@@ -122,6 +130,10 @@ public class LanguageService {
             case LOAD_FROM_PGN -> "Charger depuis un fichier PGN";
             case LOAD_FROM_FEN -> "Charger depuis une chaîne Fen";
             case OPEN_PGN_FILE -> "Ouvrir un fichier PGN";
+            case SELECT_DIFFICULTY -> "Sélectionner la difficulté";
+            case EASY -> "Facile";
+            case NORMAL -> "Normal";
+            case HARD -> "Difficile";
             case WHITE -> "Blancs";
             case BLACK -> "Noirs";
             case TO_PLAY -> "Trait aux {color}";

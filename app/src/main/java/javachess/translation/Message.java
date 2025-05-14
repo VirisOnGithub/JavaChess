@@ -31,11 +31,15 @@ public enum Message {
     PLAY_VS_COMPUTER,
     LOAD_FROM_PGN,
     OPEN_PGN_FILE,
+    SELECT_DIFFICULTY,
+    EASY,
+    NORMAL,
+    HARD,
 
     // Colors
     WHITE,
     BLACK,
 
-    // Window
+    // GUIChessDisplay
     TO_PLAY, LOAD_FROM_FEN,
 }

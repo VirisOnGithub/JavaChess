@@ -21,7 +21,7 @@ import javachess.translation.Message;
  * Class representing the main window of the chess game.
  * This class is responsible for displaying the chessboard, pieces, and handling user interactions.
  */
-public class Window extends JFrame implements Observer, EventVisitor {
+public class GUIChessDisplay extends JFrame implements Observer, EventVisitor {
 
     CaseLabel[][] tabJL;
     Map<Piece, ImageIcon> pieceIcons = new HashMap<>();
@@ -30,10 +30,10 @@ public class Window extends JFrame implements Observer, EventVisitor {
     PieceColor lastColorClicked;
     final Game game;
 
-    public Window(Game game) {
+    public GUIChessDisplay(Game game) {
         super("Java Chess");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("/classic/wK.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(GUIChessDisplay.class.getResource("/classic/wK.png")));
         setPreferredSize(new Dimension(800, 800));
 
         // Fills the pieceIcons map with the pieces and their corresponding icons
