@@ -24,7 +24,7 @@ public class ChessGameMenu extends JFrame {
         languageService.setLanguage(new ConfigParser().getLanguage());
 
         setTitle("Chess Master - " + languageService.getMessage(Message.MAIN_MENU));
-        setSize(500, 400);
+        setSize(500, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
@@ -72,6 +72,13 @@ public class ChessGameMenu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onLoadPGN();
+            }
+        }));
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        mainPanel.add(createStyledButton(languageService.getMessage(Message.LOAD_FROM_FEN), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onLoadFEN();
             }
         }));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
@@ -186,6 +193,23 @@ public class ChessGameMenu extends JFrame {
         this.dispose();
         SettingsPanel settingsPanel = new SettingsPanel(this);
         settingsPanel.setVisible(true);
+    }
+
+    /**
+     * Action performed when the "Load FEN" button is clicked.
+     */
+    private void onLoadFEN() {
+        String fen = JOptionPane.showInputDialog(this, languageService.getMessage(Message.LOAD_FROM_FEN));
+        if (fen != null && !fen.isEmpty()) {
+            // Avoid blocking the current thread, (while loop)
+            new Thread(() -> {
+                this.dispose();
+                Game game = new Game();
+                game.fromFEN(fen);
+                new Window(game);
+                game.playGame();
+            }).start();
+        }
     }
 
     public static void main(String[] args) {

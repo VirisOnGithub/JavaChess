@@ -332,4 +332,66 @@ public class Game extends Observable {
     public String getFEN() {
         return board.getFEN(fiftyMoveRuleCounter, getCurrentPlayer().getColor());
     }
+
+    /**
+     * Set the FEN string of the current board state.
+     * @param fen The FEN string to be set.
+     */
+    public void fromFEN(String fen) {
+        String[] parts = fen.split(" ");
+        String boardPart = parts[0];
+        String colorPart = parts[1];
+        String castlingPart = parts[2];
+        String enPassantPart = parts[3];
+        String halfMovePart = parts[4];
+        String fullMovePart = parts[5];
+
+        // Clear the initial pieces set up in the constructor
+        BiMap<Position, Cell> cells = board.getCells();
+        for (Cell cell : cells.reverseKeySet()) {
+            cell.setPiece(null);
+        }
+
+        // Set the pieces on the board from the FEN string
+        int row = 0;
+        for (String rowString : boardPart.split("/")) {
+            int col = 0;
+            for (char c : rowString.toCharArray()) {
+                if (Character.isDigit(c)) {
+                    col += Character.getNumericValue(c);
+                } else {
+                    Piece piece = Piece.fromFEN(c, new Cell(this.board));
+                    cells.get(new Position(col, row)).setPiece(piece);
+                    col++;
+                }
+            }
+            row++;
+        }
+
+        // Set the current player
+        if( colorPart.equals("b")) {
+            actualPlayer = 1;
+        } else if (colorPart.equals("w")) {
+            actualPlayer = 0;
+        } else {
+            System.err.println("Invalid color in FEN string: " + colorPart);
+            return;
+        }
+
+        // Set castling rights
+        for (char c : castlingPart.toCharArray()) {
+            switch (c) {
+                case 'K' -> cells.get(new Position(7, 7)).getPiece().setMoved();
+                case 'Q' -> cells.get(new Position(0, 7)).getPiece().setMoved();
+                case 'k' -> cells.get(new Position(7, 0)).getPiece().setMoved();
+                case 'q' -> cells.get(new Position(0, 0)).getPiece().setMoved();
+            }
+        }
+
+        // Set en passant possibility
+        board.isEnPassantPossible = !enPassantPart.equals("-");
+
+        // Set move counters
+        board.moveCounter = Integer.parseInt(fullMovePart);
+    }
 }

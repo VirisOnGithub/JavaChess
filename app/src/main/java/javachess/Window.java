@@ -3,8 +3,6 @@ package javachess;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -14,9 +12,6 @@ import javachess.events.*;
 import javachess.pieces.*;
 import javachess.player.BotPlayer;
 import javachess.player.HumanPlayer;
-import javachess.player.Player;
-
-import static java.lang.Math.min;
 
 
 /**
@@ -221,6 +216,7 @@ public class Window extends JFrame implements Observer, EventVisitor {
     @Override
     public void visit(CheckMateEvent event) {
         JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.CHECKMATE, Map.of("player", event.getWinnerColor().toString())));
+        this.dispose();
     }
 
     @Override
@@ -275,11 +271,13 @@ public class Window extends JFrame implements Observer, EventVisitor {
     @Override
     public void visit(DrawEvent event) {
         JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.DRAW) + "!" + event.getReason());
+        this.dispose();
     }
 
     @Override
     public void visit(StalemateEvent event) {
         JOptionPane.showMessageDialog(this, game.languageService.getMessage(Message.STALEMATE));
+        this.dispose();
     }
 
     @Override

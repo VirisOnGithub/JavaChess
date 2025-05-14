@@ -1,8 +1,8 @@
-halo rouge quand echec
-arrêter le jeu quand mat/pat/draw
+halo rouge quand echec (done)
+arrêter le jeu quand mat/pat/draw (done)
 debug sounds
 
 
 pour le mat par insuffisance : si tour, dame ou pion : good
 faire un FEN loader
-roi en echec sur le roque, ça marche ?
+roi en échec sur le roque, ça marche ? => à absolument faire

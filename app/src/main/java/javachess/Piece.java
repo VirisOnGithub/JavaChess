@@ -1,6 +1,7 @@
 package javachess;
 
 import javachess.decorators.PieceDecorator;
+import javachess.pieces.*;
 
 /**
  * Abstract class representing a chess piece.
@@ -118,6 +119,10 @@ public abstract class Piece {
         this.cell = cell;
     }
 
+    /**
+     * Returns the FEN character representing the piece.
+     * @return The FEN character representing the piece.
+     */
     public char getFEN() {
         char fen = switch (getType()) {
             case PAWN -> 'P';
@@ -128,5 +133,20 @@ public abstract class Piece {
             case KING -> 'K';
         };
         return color == PieceColor.WHITE ? fen : Character.toLowerCase(fen);
+    }
+
+    static Piece fromFEN(char c, Cell cell) {
+        PieceColor color = Character.isUpperCase(c) ? PieceColor.WHITE : PieceColor.BLACK;
+        char pieceChar = Character.toUpperCase(c);
+
+        return switch (pieceChar) {
+            case 'P' -> new Pawn(color, cell);
+            case 'R' -> new Rook(color, cell);
+            case 'N' -> new Knight(color, cell);
+            case 'B' -> new Bishop(color, cell);
+            case 'Q' -> new Queen(color, cell);
+            case 'K' -> new King(color, cell);
+            default -> throw new IllegalArgumentException("Invalid piece character: " + c);
+        };
     }
 }

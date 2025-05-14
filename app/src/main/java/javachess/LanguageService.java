@@ -51,6 +51,7 @@ public class LanguageService {
             case PLAY_VS_PLAYER -> "Jugar contra un jugador";
             case PLAY_VS_COMPUTER -> "Jugar contra la computadora";
             case LOAD_FROM_PGN -> "Cargar desde archivo PGN";
+            case LOAD_FROM_FEN -> "Cargar desde FEN";
             case OPEN_PGN_FILE -> "Abrir archivo PGN";
             case WHITE -> "Blancas";
             case BLACK -> "Negras";
@@ -86,6 +87,7 @@ public class LanguageService {
             case PLAY_VS_PLAYER -> "Play vs Player";
             case PLAY_VS_COMPUTER -> "Play vs Computer";
             case LOAD_FROM_PGN -> "Load from PGN file";
+            case LOAD_FROM_FEN -> "Load from FEN paste";
             case OPEN_PGN_FILE -> "Open PGN file";
             case WHITE -> "White";
             case BLACK -> "Black";
@@ -118,6 +120,7 @@ public class LanguageService {
             case PLAY_VS_PLAYER -> "Jouer contre un joueur";
             case PLAY_VS_COMPUTER -> "Jouer contre l'ordinateur";
             case LOAD_FROM_PGN -> "Charger depuis un fichier PGN";
+            case LOAD_FROM_FEN -> "Charger depuis une chaîne Fen";
             case OPEN_PGN_FILE -> "Ouvrir un fichier PGN";
             case WHITE -> "Blancs";
             case BLACK -> "Noirs";

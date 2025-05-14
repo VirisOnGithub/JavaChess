@@ -37,5 +37,5 @@ public enum Message {
     BLACK,
 
     // Window
-    TO_PLAY,
+    TO_PLAY, LOAD_FROM_FEN,
 }

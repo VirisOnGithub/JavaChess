@@ -47,6 +47,14 @@ application {
     mainClass = 'javachess.Game'
 }
 
+jar {
+    manifest {
+        attributes(
+            'Main-Class': application.mainClass
+        )
+    }
+}
+
 run {
     standardInput = System.in
 }

@@ -19,8 +19,8 @@ import static java.lang.System.exit;
 public class Board {
     private final BiMap<Position, Cell> cells;
     private Move lastMove;
-    private boolean isEnPassantPossible;
-    private int moveCounter = 1;
+    boolean isEnPassantPossible;
+    int moveCounter = 1;
 
     public Board() {
         cells = new BiMap<>();
