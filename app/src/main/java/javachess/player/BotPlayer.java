@@ -5,10 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
-import javachess.*;
+import javachess.model.*;
 import javachess.pieces.Bishop;
 import javachess.pieces.Knight;
 import javachess.pieces.Queen;

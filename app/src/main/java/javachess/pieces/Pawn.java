@@ -1,9 +1,9 @@
 package javachess.pieces;
 
-import javachess.Cell;
-import javachess.Piece;
-import javachess.PieceColor;
-import javachess.PieceType;
+import javachess.model.Cell;
+import javachess.model.Piece;
+import javachess.model.PieceColor;
+import javachess.model.PieceType;
 import javachess.decorators.EnPassantDecorator;
 import javachess.decorators.PawnDecorator;
 

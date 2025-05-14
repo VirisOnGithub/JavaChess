@@ -1,6 +1,6 @@
 package javachess.events;
 
-import javachess.*;
+import javachess.model.Position;
 
 /**
  * Event that indicates a promotion of a pawn to a different piece.

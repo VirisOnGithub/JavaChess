@@ -1,8 +1,7 @@
 package javachess.player;
 
-import javachess.Move;
-import javachess.PieceColor;
-import javachess.Position;
+import javachess.model.Move;
+import javachess.model.PieceColor;
 
 public interface Player {
     /**

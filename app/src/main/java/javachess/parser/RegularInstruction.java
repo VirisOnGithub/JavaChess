@@ -1,6 +1,8 @@
 package javachess.parser;
 
-import javachess.*;
+import javachess.model.PieceColor;
+import javachess.model.PieceType;
+import javachess.model.Position;
 
 public class RegularInstruction implements Instruction {
     private final PieceColor pieceColor;

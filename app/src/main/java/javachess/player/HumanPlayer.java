@@ -1,9 +1,9 @@
 package javachess.player;
 
-import javachess.Game;
-import javachess.Move;
-import javachess.PieceColor;
-import javachess.Position;
+import javachess.model.Game;
+import javachess.model.Move;
+import javachess.model.PieceColor;
+import javachess.model.Position;
 
 /**
  * Class representing a player in the chess game.

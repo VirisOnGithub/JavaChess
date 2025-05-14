@@ -1,12 +1,11 @@
 package javachess.parser;
 
-import javachess.PieceColor;
-import javachess.PieceType;
-import javachess.Position;
+import javachess.model.PieceColor;
+import javachess.model.PieceType;
+import javachess.model.Position;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

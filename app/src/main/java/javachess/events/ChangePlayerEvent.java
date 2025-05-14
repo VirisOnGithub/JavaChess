@@ -1,8 +1,6 @@
 package javachess.events;
 
-import javachess.Event;
-import javachess.EventVisitor;
-import javachess.PieceColor;
+import javachess.model.PieceColor;
 
 /**
  * Event that changes the player whose turn it is.

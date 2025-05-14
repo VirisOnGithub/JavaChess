@@ -24,3 +24,25 @@ You can also only download the release (`.jar` file):
 java -jar JavaChess.jar
 ```
 
+## Documentation
+
+### From source
+
+All the documentation can be generated from Gradle:
+
+```bash
+# Windows
+.\gradlew.bat javadoc
+# Linux
+./gradlew javadoc
+```
+
+Then open the `build/docs/javadoc/index.html` file in your browser.
+
+### Already generated
+
+The latest version of this javadoc is also online [here](https://javachess.clement-reniers.fr).
+
+
+
+

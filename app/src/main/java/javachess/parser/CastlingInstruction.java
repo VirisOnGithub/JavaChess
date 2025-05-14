@@ -1,6 +1,6 @@
 package javachess.parser;
 
-import javachess.PieceColor;
+import javachess.model.PieceColor;
 
 /**
  * Instruction that indicates a castling move.

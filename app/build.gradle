@@ -44,7 +44,7 @@ sourceSets {
 
 application {
     // Define the main class for the application.
-    mainClass = 'javachess.Game'
+    mainClass = 'javachess.model.Game'
 }
 
 jar {
@@ -59,9 +59,9 @@ run {
     standardInput = System.in
 }
 
-tasks.named('test') {
-    // Use JUnit Platform for unit tests.
-    useJUnitPlatform()
+tasks.javadoc {
+    classpath = sourceSets.main.compileClasspath
+    options.memberLevel = JavadocMemberLevel.PROTECTED
 }
 
 //tasks.named('console') {

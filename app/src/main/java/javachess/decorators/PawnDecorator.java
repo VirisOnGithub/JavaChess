@@ -1,6 +1,7 @@
 package javachess.decorators;
 
-import javachess.*;
+import javachess.model.*;
+
 import java.util.ArrayList;
 
 public class PawnDecorator extends PieceDecorator {

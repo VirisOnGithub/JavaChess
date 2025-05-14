@@ -1,7 +1,6 @@
 package javachess.decorators;
 
-import javachess.*;
-import javachess.PieceType;
+import javachess.model.*;
 
 import java.util.ArrayList;
 

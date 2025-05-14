@@ -1,8 +1,5 @@
 package javachess.events;
 
-import javachess.Event;
-import javachess.EventVisitor;
-
 /**
  * Event that indicates a sound to be played.
  * It is sent to the window to play a sound.

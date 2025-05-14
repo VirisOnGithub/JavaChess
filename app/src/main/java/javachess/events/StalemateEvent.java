@@ -1,7 +1,5 @@
 package javachess.events;
 
-import javachess.*;
-
 /**
  * Event that indicates a stalemate situation in the game.
  * This event is triggered when a player has no legal moves and is not in check.
