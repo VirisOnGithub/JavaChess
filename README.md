@@ -46,7 +46,7 @@ The latest version of this javadoc is also online [here](https://javachess.cleme
 ## Sample problems
 
 - Mate in 1
-  - FEN : `r1b5/3n3R/2p2p2/p4P2/qp1P4/1k2P3/5PQ1/1NK5 w - - 0 33`
+  - FEN : `r1b5/3n3R/5p2/p4P2/qp1P4/1k2P3/5PQ1/1NK5 w - - 0 33`
   - Solution : 1. Qg8# 1-0
 
 - Mate in 1
