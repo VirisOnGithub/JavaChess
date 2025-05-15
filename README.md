@@ -17,7 +17,9 @@ Simply clone the repo and run:
 
 ### From release
 
-You can also only download the release (`.jar` file):
+You can also only download the release (`.jar` file):  
+> (if you downloaded the project from zip, you can find the `.jar` file in the `build/libs` folder)
+> if it isn't generated, run the command `./gradlew shadowJar` to generate it.
 
 ```bash
 # Windows & Linux
