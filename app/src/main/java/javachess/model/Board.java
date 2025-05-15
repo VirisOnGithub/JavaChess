@@ -129,10 +129,6 @@ public class Board {
             if (piece != null && piece.getColor() == color) {
                 ArrayList<Cell> destinations = piece.getDecorator().getValidCells();
 
-                if(destinations.isEmpty()) {
-                    return true;
-                }
-
                 for (Cell to : destinations) {
                     Piece captured = to.getPiece();
 
