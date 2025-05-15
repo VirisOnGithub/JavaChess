@@ -21,7 +21,7 @@ You can also only download the release (`.jar` file):
 
 ```bash
 # Windows & Linux
-java -jar JavaChess.jar
+java -jar app-all.jar
 ```
 
 ## Documentation
